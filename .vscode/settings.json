@@ -43,5 +43,6 @@
         "memory": "cpp",
         "thread": "cpp",
         "types.h": "c"
-    }
+    },
+    "editor.fontFamily": "'Noto Mono'"
 }

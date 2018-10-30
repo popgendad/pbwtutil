@@ -86,6 +86,7 @@ typedef struct _bed_t
 {
     int header1;
     int header2;
+    int phased;
     int orientation;
     uint64_t record_size;       /* number of bytes per record (major-order singleton array) */
     uint64_t size;              /* number of bytes of data */
@@ -111,28 +112,28 @@ typedef struct _plink_t
 extern bim_t *read_bim(const char *, size_t *);
 
 /* Index a bim dataset */
-extern khash_t(integer) *index_bim(const bim_t *, size_t *);
+extern khash_t(integer) *index_bim(const bim_t *, const size_t);
 
 /* Write marker information to bim file */
-extern int write_bim(const char *, const bim_t *, size_t);
+extern int write_bim(const char *, const bim_t *, const size_t);
 
 /* Read input fam file */
 extern fam_t *read_fam(const char *, size_t *);
 
 /* Index a fam dataset */
-extern khash_t(integer) *index_fam(const fam_t *, size_t *);
+extern khash_t(integer) *index_fam(const fam_t *, const size_t);
 
 /* Write sample information to fam file */
-extern int write_fam(const char *, const fam_t *, size_t);
+extern int write_fam(const char *, const fam_t *, const size_t);
 
 /* Read input reg file */
 extern reg_t *read_reg(const char *, size_t *);
 
 /* Index a reg data set */
-extern khash_t(integer) *index_reg(const reg_t *, size_t *);
+extern khash_t(integer) *index_reg(const reg_t *, const size_t);
 
 /* Write region information to reg file */
-extern int write_reg(const char *, const reg_t *, size_t);
+extern int write_reg(const char *, const reg_t *, const size_t);
 
 /* Update the encoding with a new two-bit value (e.g., BED_HOMOZYGOUS_0) */
 extern void set_encoding(unsigned char *data, uint64_t record_size, uint64_t major, uint64_t minor, const unsigned char genotype);
@@ -141,7 +142,7 @@ extern void set_encoding(unsigned char *data, uint64_t record_size, uint64_t maj
 extern plink_t *read_plink(const char *, int);
 
 /* Dump data to disk */
-extern void dump(const plink_t *dataset, const char *bedfile, const char *bimfile, const char *famfile);
+//extern void dump(const plink_t *dataset, const char *bedfile, const char *bimfile, const char *famfile);
 
 /* Compute bed data binary record size based on number of elements in each record
  * (e.g., if using SNP-major order, this is the number of inidiviuals) */
@@ -153,44 +154,39 @@ inline unsigned char get_encoding(const unsigned char *data, uint64_t record_siz
     return (data[major * record_size + minor / 4] >> 2 * (minor % 4)) & 3;
 }
 
-inline int phased()
+inline unsigned char genotype(bed_t *bed, uint64_t i, uint64_t m)
 {
-    return header2 == HAP_MAGIC2;
+    return get_encoding(bed->data, bed->record_size, bed->orientation ? m : i, bed->orientation ? i : m);
 }
 
-inline unsigned char genotype(uint64_t i, uint64_t m)
+inline void set_genotype(bed_t *bed, uint64_t i, uint64_t m, unsigned char g)
 {
-    return get_encoding(data, record_size, orientation ? m : i, orientation ? i : m);
-}
-
-inline void set_genotype(uint64_t i, uint64_t m, unsigned char g)
-{
-    set_encoding(data, record_size, orientation ? m : i, orientation ? i : m, g);
+    set_encoding(bed->data, bed->record_size, bed->orientation ? m : i, bed->orientation ? i : m, g);
 }
 
 
 /* create bed */
-bed_t(int h1, int h2, int snp_major_order, uint64_t rsz, uint64_t dsz, unsigned char *a) : header1(h1), header2(h2), orientation(snp_major_order), record_size(rsz), size(dsz), data(a) {}
-bed_t(int snp_major_order, uint64_t rsz, uint64_t dsz, unsigned char *a) : header1(BED_MAGIC1), header2(BED_MAGIC2), orientation(snp_major_order), record_size(rsz), size(dsz), data(a) {}
+//bed_t(int h1, int h2, int snp_major_order, uint64_t rsz, uint64_t dsz, unsigned char *a) : header1(h1), header2(h2), orientation(snp_major_order), record_size(rsz), size(dsz), data(a) {}
+//bed_t(int snp_major_order, uint64_t rsz, uint64_t dsz, unsigned char *a) : header1(BED_MAGIC1), header2(BED_MAGIC2), orientation(snp_major_order), record_size(rsz), size(dsz), data(a) {}
 
 
 /* Create a new bed object and dynamically allocate data for it */
-extern BED *allocate_bed(uint64_t n_indiv, uint64_t n_snps, int orientation, bool phased = false);
+/* extern bed_t *allocate_bed(uint64_t n_indiv, uint64_t n_snps, int orientation, bool phased = false); */
 
 /* Load bed.  Use given unsigned char array or allocate a new one if argument is NULL */
-extern bed_t *read_bed(const char *, uint64_t n_indiv, uint64_t n_snps, unsigned char *data = NULL);
+extern bed_t *read_bed(const char *, uint64_t n_indiv, uint64_t n_snps, unsigned char *data);
 
 /* Dump bed, return number of bytes written */
-extern uint64_t dump_bed(FILE *, const bed_t *);
+extern uint64_t write_bed(FILE *, const bed_t *);
 
 /* Access */
-inline unsigned char plink_genotype(bed_t *bed, uint64_t i, uint64_t m) { return bed->genotype(i, m); }
+/*inline unsigned char plink_genotype(bed_t *bed, uint64_t i, uint64_t m) { return bed->genotype(i, m); }*/
 
 /* If you know the indiv. and SNP but don't care about the orientation */
-inline void plink_set_genotype(bed_t *bed, uint64_t i, uint64_t m, const unsigned char g) { bed->set_genotype(i, m, g); }
+/*inline void plink_set_genotype(bed_t *bed, uint64_t i, uint64_t m, const unsigned char g) { bed->set_genotype(i, m, g); }*/
 
 /* For phased interpretation: */
-inline bool plink_haplotype(bed_t *bed, uint64_t i, uint64_t m, int parent) { return (bed->genotype(i, m) & (1 << parent)) ? true : false; }
-extern void plink_set_haplotype(uint64_t indiv_index, uint64_t snp_index, int parent, bool bit);
+inline int plink_haplotype(bed_t *bed, uint64_t i, uint64_t m, int parent) { return (genotype(bed, i, m) & (1 << parent)) ? 1 : 0; }
+//extern void plink_set_haplotype(uint64_t indiv_index, uint64_t snp_index, int parent, bool bit);
 
 #endif

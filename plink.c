@@ -27,7 +27,7 @@ plink_t *read_plink(const char *instub, int phased)
     return p;
 }
 
-bed_t *read_bed(const char *bedfile, uint64_t nsam, uint64_t nsnp, unsigned char *data = NULL)
+bed_t *read_bed(const char *bedfile, uint64_t nsam, uint64_t nsnp, unsigned char *data)
 {
     bed_t *bed = malloc(sizeof(bed_t));
     FILE *fin;
@@ -60,23 +60,16 @@ bed_t *read_bed(const char *bedfile, uint64_t nsam, uint64_t nsnp, unsigned char
         free(data);
         return 0;
     }
-    const size_t major = orientation == SNP_MAJOR_ORDER ? n_snps : n_indiv;
-    const size_t minor = orientation == SNP_MAJOR_ORDER ? n_indiv : n_snps;
-    const size_t record_size = bed_record_size(minor);
-    const size_t data_size = major * record_size;
-    return new bed_t(
-               phased ? HAP_MAGIC1 : BED_MAGIC1,
-               phased ? HAP_MAGIC2 : BED_MAGIC2,
-               orientation,
-               record_size,
-               major * record_size,
-               new unsigned char[data_size]);
     bed->header1 = h1;
     bed->header2 = h2;
     bed->orientation = smo;
     bed->record_size = record_size;
     bed->size = bytesread;
     bed->data = data;
+    if (bed->header2 == HAP_MAGIC2)
+        bed->phased = 1;
+    else
+        bed->phased = 0;
     return bed;
 }
 
@@ -129,7 +122,7 @@ bim_t *read_bim(const char *bimfile, size_t *nl)
     return bim;
 }
 
-khash_t(integer) *index_bim(const bim_t *bim, size_t nl)
+khash_t(integer) *index_bim(const bim_t *bim, const size_t nl)
 {
     int a = 0;
     size_t i = 0;
@@ -146,7 +139,7 @@ khash_t(integer) *index_bim(const bim_t *bim, size_t nl)
     return bx;
 }
 
-int write_bim(const char *outfile, const bim_t *bim, size_t nl)
+int write_bim(const char *outfile, const bim_t *bim, const size_t nl)
 {
     size_t i = 0;
     FILE *fout;
@@ -199,7 +192,7 @@ fam_t *read_fam(const char *famfile, size_t *nl)
     return fam;
 }
 
-khash_t(integer) *index_fam(const fam_t *fam, size_t *nl)
+khash_t(integer) *index_fam(const fam_t *fam, const size_t nl)
 {
     int a = 0;
     size_t i = 0;
@@ -216,7 +209,7 @@ khash_t(integer) *index_fam(const fam_t *fam, size_t *nl)
     return fx;   
 }
 
-int write_fam(const char *outfile, const fam_t *fam, size_t nl)
+int write_fam(const char *outfile, const fam_t *fam, const size_t nl)
 {
     size_t i = 0;
     FILE *fout;
@@ -273,7 +266,7 @@ reg_t *read_reg(const char *regfile, size_t *nl)
     return reg;
 }
 
-khash_t(integer) *index_reg(const reg_t *reg, size_t *nl)
+khash_t(integer) *index_reg(const reg_t *reg, const size_t nl)
 {
     int a = 0;
     size_t i = 0;
@@ -290,7 +283,7 @@ khash_t(integer) *index_reg(const reg_t *reg, size_t *nl)
     return rx;     
 }
 
-int write_reg(const char *outfile, const reg_t *reg, size_t nl)
+int write_reg(const char *outfile, const reg_t *reg, const size_t nl)
 {
     size_t i = 0;
     FILE *fout;
