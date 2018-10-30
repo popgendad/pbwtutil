@@ -52,7 +52,7 @@ This function queries the data loaded from a .reg file. The query term is the sa
 
 ## Data structures
 
-The main `plink_t` object is defined this way
+The main `plink_t` structure is defined this way
 
 ```
 typedef struct _plink_t
@@ -66,7 +66,7 @@ typedef struct _plink_t
 } plink_t;
 ```
 
-Likewise, there are data structure defined for each component. The `bim_t` structure is
+Likewise, there are data structures defined for each component. The `bim_t` structure is
 
 ```
 typedef struct _bim_t
