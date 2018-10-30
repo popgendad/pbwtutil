@@ -7,7 +7,7 @@ libplink.a: plink.o
 	ar rcs $@ $<
 	ranlib $@
 
-plink.o: plink.c plink.h
+plink.o: plink.c plink.h khash.h
 	$(CC) $(CFLAGS) -c $<
 
 clean:
