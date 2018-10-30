@@ -50,6 +50,84 @@ char * query_reg (reg_t *r, const char *iid)
 
 This function queries the data loaded from a .reg file. The query term is the sample id and the function returns a string of the region name associated with that sample in the .reg file.
 
+## Data structures
+
+The main `plink_t` object is defined this way
+
+```
+typedef struct _plink_t
+{
+    size_t nsam;    /* Number of diploid samples */
+    size_t nsnp;    /* Number of single nucleotide polymorphism loci */
+    bed_t *bed;     /* Pointer to array of bed data structures */
+    bim_t *bim;     /* Pointer to array of bim data structures */
+    fam_t *fam;     /* Pointer to array of fam data structures */
+    reg_t *reg;     /* Pointer to array of reg data structures */
+} plink_t;
+```
+
+Likewise, there are data structure defined for each component. The `bim_t` structure is
+
+```
+typedef struct _bim_t
+{
+    int ch;           /* plink-format integer chromosome identifier */
+    char *rsid;       /* marker ID, generally matches '^rs[0-9]+$' */
+    double cM;        /* recombination distance from previous marker (or beginning of chromosome) */
+    uint64_t bp;      /* coordinate location in base pairs */
+    char a0;          /* First allele in genotype */
+    char a1;          /* Second allele in genotype */
+    khash_t(integer) *index;  /* Hash keyed on rsid */
+} bim_t;
+```
+
+The `fam_t` data structure
+
+```
+typedef struct _fam_t
+{
+    char *fid;           /* Family ID */
+    char *iid;           /* Individual ID */
+    char *pid;           /* Paternal ID */
+    char *mid;           /* Maternal ID */
+    char *sex;           /* Sex */
+    char *phe;           /* Encoded phenotype */
+    khash_t(integer) *index;  /* Hash keyed on iid */
+} fam_t;
+```
+
+The reg data structure `reg_t`
+
+```
+typedef struct _reg_t
+{
+    char *fid;           /* Family ID */
+    char *iid;           /* Individual ID */
+    char *pid;           /* Paternal ID */
+    char *mid;           /* Maternal ID */
+    char *sex;           /* Sex */
+    char *phe;           /* Encoded phenotype */
+    char *pop;           /* Population name */
+    char *reg;           /* Region name */
+    khash_t(integer) *index;  /* Hash keyed on iid */
+} reg_t;
+```
+
+And finally the bed/hap files, which hold all of the genotype data, type `bed_t`
+
+```
+typedef struct _bed_t
+{
+    int header1;
+    int header2;
+    int phased;
+    int orientation;
+    uint64_t record_size;       /* number of bytes per record (major-order singleton array) */
+    uint64_t size;              /* number of bytes of data */
+    unsigned char *data;
+} bed_t;
+```
+
 ## Contact
 
 For questions or bug reports, contact [daniel.garrigan@ancestry.com](mailto:daniel.garrigan@ancestry.com)
