@@ -11,7 +11,7 @@
 const char UNKNOWN_VARIANT = '0';
 
 plink_t *
-read_plink(const char *instub, int phased)
+read_plink(const char *instub, const int has_reg, const int is_phased)
 {
     plink_t *p = malloc(sizeof(plink_t));
     size_t regdum, nsam, nsnp;
@@ -30,7 +30,7 @@ read_plink(const char *instub, int phased)
     strcat(bimfile, ".bim");
     strcat(famfile, ".fam");
     strcat(regfile, ".reg");
-    if (phased)
+    if (is_phased)
         strcat(bedfile, ".hap");
     else
         strcat(bedfile, ".bed");
@@ -47,7 +47,7 @@ read_plink(const char *instub, int phased)
         fprintf(stderr, "ERROR: problem accessing famfile %s\n", famfile);
         return NULL;
     }
-    if (stat(regfile, &sinfo) != 0)
+    if (has_reg && (stat(regfile, &sinfo) != 0))
     {
         fprintf(stderr, "ERROR: problem accessing regfile %s\n", regfile);
         return NULL;
@@ -61,7 +61,8 @@ read_plink(const char *instub, int phased)
     /* Read data from files */
     p->bim = read_bim(bimfile, &nsnp);
     p->fam = read_fam(famfile, &nsam);
-    p->reg = read_reg(regfile, &regdum);
+    if (has_reg)
+        p->reg = read_reg(regfile, &regdum);
     p->bed = read_bed(bedfile, nsam, nsnp, NULL);
     p->nsam = nsam;
     p->nsnp = nsnp;
@@ -73,6 +74,34 @@ read_plink(const char *instub, int phased)
     free(regfile);
 
     return p;
+}
+
+char *
+hap2str (plink_t *p, const uint64_t i, const int parent)
+{
+    size_t j = 0;
+    char *str = malloc(p->nsnp+1);
+    for (j = 0; j < p->nsnp; ++j)
+    {
+        if (plink_haplotype(p->bed, i, j, parent)) str[j] = '1';
+        else str[j] = '0';
+    }
+    str[j] = '\0';
+    return str;
+}
+
+char *
+query_reg (reg_t *r, const char *iid)
+{
+    uint64_t i;
+    char *result;
+    khint_t k = 0;
+    k = kh_get(integer, r->index, iid);
+    if (k != kh_end(r->index))
+        i = kh_value(r->index, k);
+    result = strdup(r[i].reg);
+
+    return result;
 }
 
 bed_t *
@@ -134,7 +163,7 @@ read_bim (const char *bimfile, size_t *nl)
     size_t lc = 0;
     size_t lalloc = CHUNK_SIZE;
     char line[LINE_LENGTH];
-    const char delim[] = " \t";
+    const char delim[] = " \t\n";
     bim_t *bim;
     FILE *fin;
 
@@ -234,7 +263,7 @@ read_fam (const char *famfile, size_t *nl)
     size_t lc = 0;
     size_t lalloc = CHUNK_SIZE;
     char line[LINE_LENGTH];
-    const char delim[] = " \t";
+    const char delim[] = " \t\n";
     fam_t *fam;
     FILE *fin;
 
@@ -327,7 +356,7 @@ read_reg (const char *regfile, size_t *nl)
     char line[LINE_LENGTH];
     size_t lc = 0;
     size_t lalloc = CHUNK_SIZE;
-    const char delim[] = " \t";
+    const char delim[] = " \t\n";
 
     fin = fopen(regfile, "r");
     if (fin == NULL)
@@ -394,20 +423,6 @@ index_reg (const reg_t *reg, const size_t nl)
     }
 
     return rx;     
-}
-
-char *
-query_reg(const char *iid, reg_t *r)
-{
-    uint64_t i;
-    char *result;
-    khint_t k = 0;
-    k = kh_get(integer, r->index, iid);
-    if (k != kh_end(r->index))
-        i = kh_value(r->index, k);
-    result = strdup(r[i].reg);
-
-    return result;
 }
 
 int

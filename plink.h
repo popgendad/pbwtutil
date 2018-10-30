@@ -11,6 +11,8 @@
  * Definitions
  ************************************************/
 
+#define VERSION 0.0.3-alpha
+
 /* Hash types */
 KHASH_MAP_INIT_STR(string, char *)
 KHASH_MAP_INIT_STR(integer, uint64_t)
@@ -108,6 +110,7 @@ typedef struct _plink_t
 /************************************************
  * Function prototypes
  ************************************************/
+
 /* Read input bed/hap file.  Use given unsigned char array or allocate a new one if argument is NULL */
 extern bed_t *read_bed (const char *, uint64_t n_indiv, uint64_t n_snps, unsigned char *data);
 
@@ -141,11 +144,20 @@ extern khash_t(integer) *index_reg (const reg_t *, const size_t);
 /* Write region information to reg file */
 extern int write_reg (const char *, const reg_t *, const size_t);
 
-/* Query the reg data with a sample id and get a region name back */
-extern char *query_reg(const char *, reg_t *r);
 
-/* Load available data */
-extern plink_t *read_plink (const char *, int);
+/************************************************
+ * API function prototypes
+ ************************************************/
+
+/* Read all data from plink set into memory */
+extern plink_t *read_plink (const char *, const int, const int);
+
+/* Get haplotype string */
+extern char *hap2str (plink_t *, const uint64_t, const int);
+
+/* Query the reg data with a sample id and get a region name back */
+extern char *query_reg (reg_t *, const char *);
+
 
 /************************************************
  * Inline functions
