@@ -39,22 +39,22 @@ read_plink(const char *instub, const int has_reg, const int is_phased)
     struct stat sinfo;
     if (stat(bimfile, &sinfo) != 0)
     {
-        fprintf(stderr, "ERROR: problem accessing bimfile %s\n", bimfile);
+        fprintf(stderr, "libplink [ERROR]: cannot access bimfile %s\n", bimfile);
         return NULL;
     }
     if (stat(famfile, &sinfo) != 0)
     {
-        fprintf(stderr, "ERROR: problem accessing famfile %s\n", famfile);
+        fprintf(stderr, "libplink [ERROR]: cannot access famfile %s\n", famfile);
         return NULL;
     }
     if (has_reg && (stat(regfile, &sinfo) != 0))
     {
-        fprintf(stderr, "ERROR: problem accessing regfile %s\n", regfile);
+        fprintf(stderr, "libplink [ERROR]: cannot access regfile %s\n", regfile);
         return NULL;
     }
     if (stat(bedfile, &sinfo) != 0)
     {
-        fprintf(stderr, "ERROR: problem accessing bedfile %s\n", bedfile);
+        fprintf(stderr, "libplink [ERROR]: cannot access bed/hap file %s\n", bedfile);
         return NULL;
     }
 
@@ -80,13 +80,17 @@ char *
 hap2str (plink_t *p, const uint64_t i, const int parent)
 {
     size_t j = 0;
-    char *str = malloc(p->nsnp+1);
+    char *str = malloc(p->nsnp + 1);
+
     for (j = 0; j < p->nsnp; ++j)
     {
-        if (plink_haplotype(p->bed, i, j, parent)) str[j] = '1';
-        else str[j] = '0';
+        if (plink_haplotype(p->bed, i, j, parent))
+            str[j] = '1';
+        else
+            str[j] = '0';
     }
     str[j] = '\0';
+
     return str;
 }
 
@@ -94,32 +98,67 @@ char *
 query_reg (reg_t *r, const char *iid)
 {
     uint64_t i;
-    char *result;
+    char *result = NULL;
     khint_t k = 0;
+
+    /* Query reg hash for sample identifier */
     k = kh_get(integer, r->index, iid);
+
+    /* Store resulting reg entry */
     if (k != kh_end(r->index))
+    {
         i = kh_value(r->index, k);
-    result = strdup(r[i].reg);
+        result = strdup(r[i].reg);
+    }
 
     return result;
+}
+
+uint64_t *
+hap2ulong (plink_t *p, const uint64_t i, const int parent)
+{
+    size_t j = 0;
+    size_t nints = p->nsnp / 64 + 1;
+    uint64_t *binarray = malloc(nints * sizeof(uint64_t));
+ 
+    /* Set all memory in binarray to zero */
+    memset(binarray, 0, nints * sizeof(uint64_t));
+ 
+    /* Set bits in binarray */
+    for (j = 0; j < p->nsnp; ++j)
+    {
+        size_t k = j / 64;
+        size_t m = j % 64;
+        if (plink_haplotype(p->bed, i, j, parent))
+            binarray[k] |= 1 << m;
+    }
+ 
+    return binarray;
 }
 
 bed_t *
 read_bed (const char *bedfile, uint64_t nsam, uint64_t nsnp, unsigned char *data)
 {
     bed_t *bed = malloc(sizeof(bed_t));
+
+    /* Open binary input stream */
     FILE *fin;
-    fin = fopen(bedfile, "r");
+    fin = fopen(bedfile, "rb");
+
+    /* Read first three bytes */
     const int h1 = fgetc(fin);
     const int h2 = fgetc(fin);
     const int smo = fgetc(fin);
 
+    /* No data */
     if (feof(fin))
         return 0;
 
+    /* Determine memory block size based on orientation */
     const size_t record_size = smo ? bed_record_size(nsam) : bed_record_size(nsnp);
     const size_t expected_size = smo ? (nsnp * record_size) : (nsam * record_size);
 
+    /* Allocate memory for data blob */
     if (data == NULL)
     {
         data = malloc(expected_size * sizeof(unsigned char));
@@ -127,32 +166,34 @@ read_bed (const char *bedfile, uint64_t nsam, uint64_t nsnp, unsigned char *data
             return 0;
     }
 
+    /* Read data blob into memory */
     const size_t bytesread = fread(data, sizeof(unsigned char), expected_size, fin);
+
+    /* Possibly truncated file */
     if (bytesread != expected_size)
     {
-        fprintf(stderr, "Unexpected EOF reading binary data");
+        fputs("Unexpected EOF reading binary data", stderr);
         free(data);
         return 0;
     }
 
+    /* Check if we are at the end of the file */
     fgetc(fin);
     if (!feof(fin))
     {
-        fprintf(stderr, "Binary ped file larger than expected");
+        fputs("Binary ped file larger than expected", stderr);
         free(data);
         return 0;
     }
  
+    /* Populate bed data structure */
     bed->header1 = h1;
     bed->header2 = h2;
     bed->orientation = smo;
     bed->record_size = record_size;
     bed->size = bytesread;
     bed->data = data;
-    if (bed->header2 == HAP_MAGIC2)
-        bed->phased = 1;
-    else
-        bed->phased = 0;
+    bed->phased =  bed->header2 == HAP_MAGIC2 ? 1 : 0;
  
     return bed;
 }
@@ -160,8 +201,8 @@ read_bed (const char *bedfile, uint64_t nsam, uint64_t nsnp, unsigned char *data
 bim_t *
 read_bim (const char *bimfile, size_t *nl)
 {
-    size_t lc = 0;
-    size_t lalloc = CHUNK_SIZE;
+    size_t lines_read = 0;
+    size_t total_alloc = CHUNK_SIZE;
     char line[LINE_LENGTH];
     const char delim[] = " \t\n";
     bim_t *bim;
@@ -171,52 +212,53 @@ read_bim (const char *bimfile, size_t *nl)
     if (fin == NULL)
         return 0;
  
-    bim = malloc(lalloc * sizeof(bim_t));
+    bim = malloc(total_alloc * sizeof(bim_t));
  
     while (fgets(line, LINE_LENGTH, fin) != NULL)
     {
-        ++lc;
-        if (lc > lalloc)
+        ++lines_read;
+        if (lines_read > total_alloc)
         {
-            lalloc += CHUNK_SIZE;
-            bim = realloc(bim, lalloc * sizeof(bim_t));
+            total_alloc += CHUNK_SIZE;
+            bim = realloc(bim, total_alloc * sizeof(bim_t));
         }
 
+        /* Parse the bim entry */
         char *token = strtok(line, delim);
+        size_t i = lines_read - 1;
+
         if (strcmp(token, "X") == 0)
-            bim[lc-1].ch = 23;
+            bim[i].ch = 23;
         else if (strcmp(token, "Y") == 0)
-            bim[lc-1].ch = 24;
+            bim[i].ch = 24;
         else if (strcmp(token, "XY") == 0)
-            bim[lc-1].ch = 25;
+            bim[i].ch = 25;
         else if (strcmp(token, "MT") == 0)
-            bim[lc-1].ch = 26;
+            bim[i].ch = 26;
         else
-            bim[lc-1].ch = atoi(token);
+            bim[i].ch = atoi(token);
         token = strtok(NULL, delim);
-        bim[lc-1].rsid = strdup(token);      
+        bim[i].rsid = strdup(token);      
         token = strtok(NULL, delim);
-        bim[lc-1].cM = strtod(token, NULL);
+        bim[i].cM = strtod(token, NULL);
         token = strtok(NULL, delim);
-        bim[lc-1].bp = strtoul(token, NULL, 0);
+        bim[i].bp = strtoul(token, NULL, 0);
         token = strtok(NULL, delim);
-        bim[lc-1].a0 = token[0];
+        bim[i].a0 = token[0];
         token = strtok(NULL, delim);
-        bim[lc-1].a1 = token[0];
+        bim[i].a1 = token[0];
     }
 
-    bim = realloc(bim, lalloc * sizeof(bim_t));
+    /* Resize bim array memory */
+    bim = realloc(bim, lines_read * sizeof(bim_t));
 
+    /* Close the input file stream */
     fclose(fin);
 
-#ifdef DEBUG
-    printf("%lu SNPs read from bim file %s\n", lc, bimfile);
-#endif
-
     /* Index the bim data set */
-    bim->index = index_bim(bim, lc);
+    bim->index = index_bim(bim, lines_read);
 
-    *nl = lc;
+    *nl = lines_read;
     return bim;
 }
 
@@ -228,8 +270,10 @@ index_bim (const bim_t *bim, const size_t nl)
     khint_t k = 0;
     khash_t(integer) *bx = NULL;
 
+    /* Initialize bim hash */
     bx = kh_init(integer);
 
+    /* Iterate through lines in bim and store indices keyed on rsid */
     for (i = 0; i < nl; ++i)
     {
         k = kh_put(integer, bx, bim[i].rsid, &a);
@@ -245,6 +289,7 @@ write_bim (const char *outfile, const bim_t *bim, const size_t nl)
     size_t i = 0;
     FILE *fout;
 
+    /* Open output file stream */
     fout = fopen(outfile, "w");
 
     for (i = 0; i < nl; ++i)
@@ -252,6 +297,7 @@ write_bim (const char *outfile, const bim_t *bim, const size_t nl)
                 bim[i].ch, bim[i].rsid, bim[i].cM, bim[i].bp,
                 bim[i].a0, bim[i].a1);
 
+    /* Close output file stream */
     fclose(fout);
 
     return 0;
@@ -260,8 +306,8 @@ write_bim (const char *outfile, const bim_t *bim, const size_t nl)
 fam_t *
 read_fam (const char *famfile, size_t *nl)
 {
-    size_t lc = 0;
-    size_t lalloc = CHUNK_SIZE;
+    size_t lines_read = 0;
+    size_t total_alloc = CHUNK_SIZE;
     char line[LINE_LENGTH];
     const char delim[] = " \t\n";
     fam_t *fam;
@@ -271,43 +317,43 @@ read_fam (const char *famfile, size_t *nl)
     if (fin == NULL)
         return 0;
 
-    fam = malloc(lalloc * sizeof(fam_t));
+    fam = malloc(total_alloc * sizeof(fam_t));
 
     while (fgets(line, LINE_LENGTH, fin) != NULL)
     {
-        ++lc;
-        if (lc > lalloc)
+        ++lines_read;
+        if (lines_read > total_alloc)
         {
-            lalloc += CHUNK_SIZE;
-            fam = realloc(fam, lalloc * sizeof(fam_t));
+            total_alloc += CHUNK_SIZE;
+            fam = realloc(fam, total_alloc * sizeof(fam_t));
         }
 
         char *token = strtok(line, delim);
-        fam[lc-1].fid = strdup(token);
+        size_t i = lines_read - 1;
+  
+        fam[i].fid = strdup(token);
         token = strtok(NULL, delim);
-        fam[lc-1].iid = strdup(token);     
+        fam[i].iid = strdup(token);     
         token = strtok(NULL, delim);
-        fam[lc-1].pid = strdup(token);
+        fam[i].pid = strdup(token);
         token = strtok(NULL, delim);
-        fam[lc-1].mid = strdup(token);
+        fam[i].mid = strdup(token);
         token = strtok(NULL, delim);
-        fam[lc-1].sex = strdup(token);
+        fam[i].sex = strdup(token);
         token = strtok(NULL, delim);
-        fam[lc-1].phe = strdup(token);
+        fam[i].phe = strdup(token);
     }
 
-    fam = realloc(fam, lalloc * sizeof(fam_t));
+    /* Re-size the array holding fam data */
+    fam = realloc(fam, lines_read * sizeof(fam_t));
 
+    /* Close the input file stream */
     fclose(fin);
 
-#ifdef DEBUG
-    fprintf(stderr, "%lu diploid samples read from fam file %s\n", lc, famfile);
-#endif
-
     /* Index the fam data set */
-    fam->index = index_fam(fam, lc);
+    fam->index = index_fam(fam, lines_read);
 
-    *nl = lc;
+    *nl = lines_read;
     return fam;
 }
 
@@ -319,8 +365,10 @@ index_fam (const fam_t *fam, const size_t nl)
     khint_t k = 0;
     khash_t(integer) *fx = NULL;
 
+    /* Initialize fam hash */
     fx = kh_init(integer);
 
+    /* Iterate through lines in bim and store indices keyed on sample identifier */
     for (i = 0; i < nl; ++i)
     {
         k = kh_put(integer, fx, fam[i].iid, &a);
@@ -351,58 +399,56 @@ write_fam (const char *outfile, const fam_t *fam, const size_t nl)
 reg_t *
 read_reg (const char *regfile, size_t *nl)
 {
+    size_t lines_read = 0;
+    size_t total_alloc = CHUNK_SIZE;
     reg_t *reg;
     FILE *fin;
     char line[LINE_LENGTH];
-    size_t lc = 0;
-    size_t lalloc = CHUNK_SIZE;
     const char delim[] = " \t\n";
 
     fin = fopen(regfile, "r");
     if (fin == NULL)
         return 0;
 
-    reg = malloc(lalloc * sizeof(reg_t));
+    reg = malloc(total_alloc * sizeof(reg_t));
 
     while (fgets(line, LINE_LENGTH, fin) != NULL)
     {
-        ++lc;
-        if (lc > lalloc)
+        ++lines_read;
+        if (lines_read > total_alloc)
         {
-            lalloc += CHUNK_SIZE;
-            reg = realloc(reg, lalloc * sizeof(reg_t));
+            total_alloc += CHUNK_SIZE;
+            reg = realloc(reg, total_alloc * sizeof(reg_t));
         }
 
         char *token = strtok(line, delim);
-        reg[lc-1].fid = strdup(token);
+        size_t i = lines_read - 1;
+ 
+        reg[i].fid = strdup(token);
         token = strtok(NULL, delim);
-        reg[lc-1].iid = strdup(token);     
+        reg[i].iid = strdup(token);     
         token = strtok(NULL, delim);
-        reg[lc-1].pid = strdup(token);
+        reg[i].pid = strdup(token);
         token = strtok(NULL, delim);
-        reg[lc-1].mid = strdup(token);
+        reg[i].mid = strdup(token);
         token = strtok(NULL, delim);
-        reg[lc-1].sex = strdup(token);
+        reg[i].sex = strdup(token);
         token = strtok(NULL, delim);
-        reg[lc-1].phe = strdup(token);
+        reg[i].phe = strdup(token);
         token = strtok(NULL, delim);
-        reg[lc-1].pop = strdup(token);
+        reg[i].pop = strdup(token);
         token = strtok(NULL, delim);
-        reg[lc-1].reg = strdup(token);
+        reg[i].reg = strdup(token);
     }
 
-    reg = realloc(reg, lalloc * sizeof(reg_t));
+    reg = realloc(reg, lines_read * sizeof(reg_t));
 
     fclose(fin);
 
-#ifdef DEBUG
-    fprintf(stderr, "%lu samples read from reg file %s\n", lc, regfile);
-#endif
-
     /* Index the reg data set */
-    reg->index = index_reg(reg, lc);
+    reg->index = index_reg(reg, lines_read);
 
-    *nl = lc;
+    *nl = lines_read;
     return reg;
 }
 

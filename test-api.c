@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include "plink.h"
 
+int print_usage(const char *);
+
 extern int opterr, optopt, optind;
 
 /* ./test-api -p -r EV62-phase.3881 */
@@ -18,7 +20,7 @@ main (int argc, char *argv[])
 
     /* Get command line options */
     opterr = 0;
-    while ((c = getopt (argc, argv, "rp")) != -1)
+    while ((c = getopt (argc, argv, "rph")) != -1)
     {
         switch (c)
         {
@@ -28,13 +30,24 @@ main (int argc, char *argv[])
             case 'p':
                 is_phased = 1;
                 break;
+            case 'h':
+                print_usage(NULL);
+                return EXIT_SUCCESS;
             case '?':
-                fprintf(stderr, "ERROR: unknown option \"-%c\".\n", optopt);
+                fprintf(stderr, "[ERROR]: unknown option \"-%c\".\n", optopt);
+                return EXIT_SUCCESS;
             default:
                 return EXIT_SUCCESS;
         }
     }
-    instub = strdup(argv[optind]);
+
+    if (optind != argc - 1)
+    {
+        print_usage("Need PLINK input stub as mandatory argument");
+        return EXIT_SUCCESS;
+    }
+    else
+        instub = strdup(argv[optind]);
 
 
     /* Read in plink data set */
@@ -67,4 +80,18 @@ main (int argc, char *argv[])
     }
 
     return EXIT_SUCCESS;
+}
+
+int print_usage(const char *msg)
+{
+    puts("Usage: test-api [OPTION]... [PLINK STUB]");
+    puts("Test of libplink API\n");
+    if (msg)
+        printf("ERROR: %s\n\n", msg);
+    puts("Options:");
+    puts("  -p     Input data are phased");
+    puts("  -r     Input PLINK stub includes a REG file");
+    puts("  -h     Display this help message and exit");
+    putchar('\n');  
+    return 0;
 }

@@ -158,6 +158,9 @@ extern char *hap2str (plink_t *, const uint64_t, const int);
 /* Query the reg data with a sample id and get a region name back */
 extern char *query_reg (reg_t *, const char *);
 
+/* Get array of unsigned long integers representing binary encoding of SNPs */
+extern uint64_t *hap2ulong (plink_t *, const uint64_t, const int);
+
 
 /************************************************
  * Inline functions
