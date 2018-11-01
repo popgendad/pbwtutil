@@ -8,8 +8,6 @@ int print_usage(const char *);
 
 extern int opterr, optopt, optind;
 
-/* ./test-api -p -r EV62-phase.3881 */
-
 int
 main (int argc, char *argv[])
 {
