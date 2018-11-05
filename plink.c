@@ -26,7 +26,6 @@ read_plink(const char *instub, const int has_reg, const int is_phased)
     strcpy(famfile, instub);
     strcpy(bedfile, instub);
     strcpy(regfile, instub);
- 
     strcat(bimfile, ".bim");
     strcat(famfile, ".fam");
     strcat(regfile, ".reg");
@@ -76,6 +75,22 @@ read_plink(const char *instub, const int has_reg, const int is_phased)
     return p;
 }
 
+unsigned char *
+hap2uchar (plink_t *p, const uint64_t i, const int parent)
+{
+	size_t j = 0;
+	unsigned char *str = malloc(p->nsnp * sizeof(unsigned char));
+	for (j = 0; j < p->nsnp; ++j)
+	{
+		if (plink_haplotype(p->bed, i, j, parent))
+			str[j] = '1';
+		else
+			str[j] = '0';
+	}
+
+	return str;
+}
+
 char *
 hap2str (plink_t *p, const uint64_t i, const int parent)
 {
@@ -120,10 +135,10 @@ hap2ulong (plink_t *p, const uint64_t i, const int parent)
     size_t j = 0;
     size_t nints = p->nsnp / 64 + 1;
     uint64_t *binarray = malloc(nints * sizeof(uint64_t));
- 
+
     /* Set all memory in binarray to zero */
     memset(binarray, 0, nints * sizeof(uint64_t));
- 
+
     /* Set bits in binarray */
     for (j = 0; j < p->nsnp; ++j)
     {
@@ -132,7 +147,7 @@ hap2ulong (plink_t *p, const uint64_t i, const int parent)
         if (plink_haplotype(p->bed, i, j, parent))
             binarray[k] |= 1 << m;
     }
- 
+
     return binarray;
 }
 
@@ -194,7 +209,7 @@ read_bed (const char *bedfile, uint64_t nsam, uint64_t nsnp, unsigned char *data
     bed->size = bytesread;
     bed->data = data;
     bed->phased =  bed->header2 == HAP_MAGIC2 ? 1 : 0;
- 
+
     return bed;
 }
 
@@ -211,9 +226,9 @@ read_bim (const char *bimfile, size_t *nl)
     fin = fopen(bimfile, "r");
     if (fin == NULL)
         return 0;
- 
+
     bim = malloc(total_alloc * sizeof(bim_t));
- 
+
     while (fgets(line, LINE_LENGTH, fin) != NULL)
     {
         ++lines_read;
@@ -238,7 +253,7 @@ read_bim (const char *bimfile, size_t *nl)
         else
             bim[i].ch = atoi(token);
         token = strtok(NULL, delim);
-        bim[i].rsid = strdup(token);      
+        bim[i].rsid = strdup(token);
         token = strtok(NULL, delim);
         bim[i].cM = strtod(token, NULL);
         token = strtok(NULL, delim);
@@ -330,10 +345,10 @@ read_fam (const char *famfile, size_t *nl)
 
         char *token = strtok(line, delim);
         size_t i = lines_read - 1;
-  
+
         fam[i].fid = strdup(token);
         token = strtok(NULL, delim);
-        fam[i].iid = strdup(token);     
+        fam[i].iid = strdup(token);
         token = strtok(NULL, delim);
         fam[i].pid = strdup(token);
         token = strtok(NULL, delim);
@@ -375,7 +390,7 @@ index_fam (const fam_t *fam, const size_t nl)
         kh_value(fx, k) = i;
     }
 
-    return fx;   
+    return fx;
 }
 
 int
@@ -423,10 +438,10 @@ read_reg (const char *regfile, size_t *nl)
 
         char *token = strtok(line, delim);
         size_t i = lines_read - 1;
- 
+
         reg[i].fid = strdup(token);
         token = strtok(NULL, delim);
-        reg[i].iid = strdup(token);     
+        reg[i].iid = strdup(token);
         token = strtok(NULL, delim);
         reg[i].pid = strdup(token);
         token = strtok(NULL, delim);
@@ -468,7 +483,7 @@ index_reg (const reg_t *reg, const size_t nl)
         kh_value(rx, k) = i;
     }
 
-    return rx;     
+    return rx;
 }
 
 int

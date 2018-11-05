@@ -12,7 +12,7 @@ plink.o: plink.c plink.h khash.h
 	$(CC) $(CFLAGS) -fPIC -c $<
 
 test-api: test-api.c libplink.a
-	$(CC) $(CFLAGS) -o $@ $< $(LIBS)
+	$(CC) $(CFLAGS) -I. -o $@ $< $(LIBS)
 
 clean:
 	rm -f *.o libplink.a test-api

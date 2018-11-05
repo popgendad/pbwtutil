@@ -155,6 +155,8 @@ extern plink_t *read_plink (const char *, const int, const int);
 /* Get haplotype string */
 extern char *hap2str (plink_t *, const uint64_t, const int);
 
+extern unsigned char *hap2uchar (plink_t *, const uint64_t, const int);
+
 /* Query the reg data with a sample id and get a region name back */
 extern char *query_reg (reg_t *, const char *);
 

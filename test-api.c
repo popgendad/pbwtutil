@@ -2,13 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "plink.h"
+#include <plink.h>
 
-int print_usage(const char *);
+/* Function prototypes */
+int print_usage (const char *);
 
+/* Externally defined variables */
 extern int opterr, optopt, optind;
 
-/* ./test-api -p -r EV62-phase.3881 */
+/* Main program function */
 
 int
 main (int argc, char *argv[])
@@ -49,12 +51,10 @@ main (int argc, char *argv[])
     else
         instub = strdup(argv[optind]);
 
-
     /* Read in plink data set */
     plink_t *p = read_plink(instub, has_reg, is_phased);
-    if (p == NULL)
+    if (!p)
         return EXIT_FAILURE;
-
 
     /* Example: How to use query_reg() function
      * to read data from test plink set and print
@@ -68,12 +68,10 @@ main (int argc, char *argv[])
         char *res = query_reg(p->reg, p->fam[i].iid);
         if ((res != NULL) && (strcmp(qreg , res) == 0))
         {
-            printf("%s\t%s\t", p->fam[i].iid, res);
             char *hs0 = hap2str(p, i, 0);
-            printf("%s\n", hs0);
-            printf("%s\t%s\t", p->fam[i].iid, res);
             char *hs1 = hap2str(p, i, 1);
-            printf("%s\n", hs1);
+            printf("%s\t%s\t%s\n", p->fam[i].iid, res, hs0);
+            printf("%s\t%s\t%s\n", p->fam[i].iid, res, hs1);
             free(hs0);
             free(hs1);
         }
@@ -82,7 +80,8 @@ main (int argc, char *argv[])
     return EXIT_SUCCESS;
 }
 
-int print_usage(const char *msg)
+int
+print_usage (const char *msg)
 {
     puts("Usage: test-api [OPTION]... [PLINK STUB]");
     puts("Test of libplink API\n");
@@ -93,5 +92,6 @@ int print_usage(const char *msg)
     puts("  -r     Input PLINK stub includes a REG file");
     puts("  -h     Display this help message and exit");
     putchar('\n');  
+
     return 0;
 }
