@@ -91,7 +91,7 @@ print_usage (const char *msg)
     puts("  -p     Input data are phased");
     puts("  -r     Input PLINK stub includes a REG file");
     puts("  -h     Display this help message and exit");
-    putchar('\n');  
+    putchar('\n');
 
     return 0;
 }
