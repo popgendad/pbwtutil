@@ -200,7 +200,7 @@ read_bed (const char *bedfile, uint64_t nsam, uint64_t nsnp, unsigned char *data
         free(data);
         return 0;
     }
- 
+
     /* Populate bed data structure */
     bed->header1 = h1;
     bed->header2 = h2;
@@ -496,7 +496,7 @@ write_reg (const char *outfile, const reg_t *reg, const size_t nl)
 
     for (i = 0; i < nl; ++i)
         fprintf(fout, "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
-                reg[i].fid, reg[i].iid, reg[i].pid, reg[i].mid, 
+                reg[i].fid, reg[i].iid, reg[i].pid, reg[i].mid,
                 reg[i].sex, reg[i].phe, reg[i].pop, reg[i].reg);
 
     fclose(fout);
