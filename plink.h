@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include "khash.h"
+#include <htslib/khash.h>
 
 /************************************************
  * Definitions
