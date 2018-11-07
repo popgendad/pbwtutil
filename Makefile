@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-Wall -O2 -fpic
-PREFIX_DIR=/usr/local
+PREFIX_DIR=/usr
 H_DIR=$(PREFIX_DIR)/include/
 L_DIR=$(PREFIX_DIR)/lib/
 
