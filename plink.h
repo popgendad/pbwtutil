@@ -53,6 +53,10 @@ KHASH_MAP_INIT_STR(integer, uint64_t)
 #define FALSE 0
 #define TRUE 1
 
+/* Buffering parameters */
+#define CHUNK_SIZE 1000
+#define LINE_LENGTH 1024
+
 /************************************************
  * Globally scoped variables
  ************************************************/
@@ -128,49 +132,49 @@ typedef struct _plink_t
  ************************************************/
 
 /* Read input bed/hap file.  Use given unsigned char array or allocate a new one if argument is NULL */
-extern bed_t *read_bed (const char *, uint64_t n_indiv, uint64_t n_snps, unsigned char *data);
+extern bed_t * bed_read (const char *, uint64_t n_indiv, uint64_t n_snps, unsigned char *data);
 
 /* Write bed/hap to file, return number of bytes written */
-extern uint64_t write_bed (FILE *, const bed_t *);
+extern uint64_t bed_write (FILE *, const bed_t *);
 
 /* Deallocate memory for bed data structure */
-extern void destroy_bed (bed_t *);
+extern void bed_destroy (bed_t *);
 
 /* Read input bim file */
-extern bim_t *read_bim (const char *, size_t *);
+extern bim_t * bim_read (const char *, size_t *);
 
 /* Index a bim dataset */
-extern khash_t(integer) *index_bim (const bim_t *, const size_t);
+extern khash_t(integer) * bim_index (const bim_t *, const size_t);
 
 /* Deallocate memory for bim data structure */
-extern void destroy_bim (bim_t *, const size_t);
+extern void bim_destroy (bim_t *, const size_t);
 
 /* Write marker information to bim file */
-extern int write_bim (const char *, const bim_t *, const size_t);
+extern int bim_write (const char *, const bim_t *, const size_t);
 
 /* Read input fam file */
-extern fam_t *read_fam (const char *, size_t *);
+extern fam_t * fam_read (const char *, size_t *);
 
 /* Index a fam dataset */
-extern khash_t(integer) *index_fam (const fam_t *, const size_t);
+extern khash_t(integer) * fam_index (const fam_t *, const size_t);
 
 /* Deallocate memory for fam data structure */
-extern void destroy_fam (fam_t *, const size_t);
+extern void fam_destroy (fam_t *, const size_t);
 
 /* Write sample information to fam file */
 extern int write_fam (const char *, const fam_t *, const size_t);
 
 /* Read input reg file */
-extern reg_t *read_reg (const char *, size_t *);
+extern reg_t *reg_read (const char *, size_t *);
 
 /* Index a reg data set */
-extern khash_t(integer) *index_reg (const reg_t *, const size_t);
+extern khash_t(integer) * reg_index (const reg_t *, const size_t);
 
 /* Deallocate memory for reg data structure */
-extern void destroy_reg (reg_t *, const size_t);
+extern void reg_destroy (reg_t *, const size_t);
 
 /* Write region information to reg file */
-extern int write_reg (const char *, const reg_t *, const size_t);
+extern int reg_write (const char *, const reg_t *, const size_t);
 
 
 /************************************************
@@ -178,10 +182,10 @@ extern int write_reg (const char *, const reg_t *, const size_t);
  ************************************************/
 
 /* Read all data from plink set into memory */
-extern plink_t *read_plink (const char *, const int, const int);
+extern plink_t *plink_init (const char *, const int, const int);
 
 /* Deallocate memory for plink_t data structure */
-extern void destroy_plink (plink_t *);
+extern void plink_destroy (plink_t *);
 
 /* Get haplotype string */
 extern char *hap2str (plink_t *, const uint64_t, const int);
