@@ -1,3 +1,13 @@
+/*********************************************************************
+ * libplink
+ * An optimized and light-weight C library for reading and writing
+ * plink format data
+ * 
+ * Author: Daniel Garrigan <daniel.garrigan@ancestry.com>
+ * 
+ * Git: https://github.ancestry.com/DNA-Science/libplink
+ * 
+ *********************************************************************/
 #ifndef PLINK_H
 #define PLINK_H
 
@@ -8,7 +18,7 @@
 #include <htslib/khash.h>
 
 /************************************************
- * Definitions
+ * Pre-processor definitions
  ************************************************/
 
 #define VERSION 0.0.3-alpha
@@ -36,6 +46,10 @@ KHASH_MAP_INIT_STR(integer, uint64_t)
 #define BED_MISSING 1
 #define BED_HETEROZYGOUS 2
 #define BED_HOMOZYGOUS_1 3
+
+/* Boolean macros */
+#define FALSE 0
+#define TRUE 1
 
 /************************************************
  * Globally scoped variables
