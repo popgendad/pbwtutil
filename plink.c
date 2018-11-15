@@ -104,12 +104,29 @@ read_plink (const char *instub, const int has_reg, const int is_phased)
         return NULL;
     }
 
-    /* Read data from files */
+    /* Read marker data from bim file */
     p->bim = read_bim (bimfile, &nsnp);
+    
+    /* Index the bim data set */
+    p->bim_index = index_bim (p->bim, nsnp);
+ 
+    /* Read the sample data from the fam file */
     p->fam = read_fam (famfile, &nsam);
+
+    /* Index the fam data set */
+    p->fam_index = index_fam (p->fam, nsam);
+
+    /* Read the population data from the reg file */
     if (has_reg == TRUE)
+    {
         p->reg = read_reg (regfile, &regdum);
+        p->reg_index = index_reg (p->reg, regdum);
+    }
+
+    /* Read the genotype data from the bed/hap file */
     p->bed = read_bed (bedfile, nsam, nsnp, NULL);
+
+    /* Assign metadata variables */
     p->nsam = nsam;
     p->nsnp = nsnp;
 
@@ -122,6 +139,27 @@ read_plink (const char *instub, const int has_reg, const int is_phased)
     return p;
 }
 
+
+void destroy_plink (plink_t *p)
+{
+    if (p->bed != NULL)
+        destroy_bed (p->bed);
+    if (p->bim != NULL)
+        destroy_bim (p->bim, p->nsnp);
+    if (p->fam != NULL)
+        destroy_fam (p->fam, p->nsam);
+    if (p->reg != NULL)
+        destroy_reg (p->reg, p->nsam);
+    if (p->bim_index != NULL)
+        kh_destroy(integer, p->bim_index);
+    if (p->fam_index != NULL)
+        kh_destroy(integer, p->fam_index);
+    if (p->reg_index != NULL)
+        kh_destroy(integer, p->reg_index);
+    free (p);
+
+    return;
+}
 
 unsigned char *
 hap2uchar (plink_t *p, const uint64_t i, const int parent)
@@ -171,26 +209,47 @@ hap2str (plink_t *p, const uint64_t i, const int parent)
 
 
 char *
-query_reg (reg_t *r, const char *iid)
+query_reg (plink_t *p, const char *iid)
 {
     uint64_t i;
     char *result;
     khint_t k;
 
     /* Query reg hash for sample identifier */
-    k = kh_get(integer, r->index, iid);
+    k = kh_get(integer, p->reg_index, iid);
 
     /* Store resulting reg entry */
-    if (k != kh_end(r->index))
+    if (k != kh_end(p->reg_index))
     {
-        i = kh_value(r->index, k);
-        result = strdup (r[i].reg);
+        i = kh_value(p->reg_index, k);
+        result = strdup (p->reg[i].reg);
         return result;
     }
     else
         return NULL;
 }
 
+
+char *
+query_pop (plink_t *p, const char *iid)
+{
+    uint64_t i;
+    char *result;
+    khint_t k;
+
+    /* Query reg hash for sample identifier */
+    k = kh_get(integer, p->reg_index, iid);
+
+    /* Store resulting reg entry */
+    if (k != kh_end(p->reg_index))
+    {
+        i = kh_value(p->reg_index, k);
+        result = strdup (p->reg[i].pop);
+        return result;
+    }
+    else
+        return NULL;
+}
 
 uint64_t *
 hap2ulong (plink_t *p, const uint64_t i, const int parent)
@@ -298,6 +357,19 @@ read_bed (const char *bedfile, uint64_t nsam, uint64_t nsnp, unsigned char *data
 }
 
 
+void destroy_bed (bed_t *bed)
+{
+    if (bed != NULL)
+    {
+        if (bed->data != NULL)
+            free (bed->data);
+        free (bed);
+    }
+
+    return;
+}
+
+
 bim_t *
 read_bim (const char *bimfile, size_t *nl)
 {
@@ -374,13 +446,26 @@ read_bim (const char *bimfile, size_t *nl)
     /* Close the input file stream */
     fclose (fin);
 
-    /* Index the bim data set */
-    bim->index = index_bim (bim, lines_read);
-
     /* Set total number of lines read from bim file */
     *nl = lines_read;
 
     return bim;
+}
+
+
+void destroy_bim (bim_t *bim, const size_t nsnp)
+{
+    size_t i;
+
+    if (bim != NULL)
+    {
+        for (i = 0; i < nsnp; ++i)
+            if (bim[i].rsid != NULL)
+                free (bim[i].rsid);
+        free (bim);
+    }
+
+    return;
 }
 
 
@@ -499,14 +584,40 @@ read_fam (const char *famfile, size_t *nl)
     /* Close the input file stream */
     fclose (fin);
 
-    /* Index the fam data set */
-    fam->index = index_fam (fam, lines_read);
-
     /* Assign the number of lines read from the fam file */
     *nl = lines_read;
 
     return fam;
 }
+
+
+void destroy_fam (fam_t *fam, const size_t nsam)
+{
+    size_t i;
+
+    if (fam != NULL)
+    {
+        for (i = 0; i < nsam; ++i)
+        {
+            if (fam[i].fid != NULL)
+                free (fam[i].fid);
+            if (fam[i].iid != NULL)
+                free (fam[i].iid);
+            if (fam[i].pid != NULL)
+                free (fam[i].pid);
+            if (fam[i].mid != NULL)
+                free (fam[i].mid);
+            if (fam[i].sex != NULL)
+                free (fam[i].sex);
+            if (fam[i].phe != NULL)
+                free (fam[i].phe);
+        }
+        free (fam);
+    }
+
+    return;
+}
+
 
 khash_t(integer) *
 index_fam (const fam_t *fam, const size_t nl)
@@ -624,13 +735,42 @@ read_reg (const char *regfile, size_t *nl)
     /* Close the input file stream */
     fclose (fin);
 
-    /* Index the reg data set */
-    reg->index = index_reg (reg, lines_read);
-
     /* Assign the number of lines read from the reg file */
     *nl = lines_read;
 
     return reg;
+}
+
+
+void destroy_reg (reg_t *reg, const size_t nsam)
+{
+    size_t i;
+
+    if (reg != NULL)
+    {
+        for (i = 0; i < nsam; ++i)
+        {
+            if (reg[i].fid != NULL)
+                free (reg[i].fid);
+            if (reg[i].iid != NULL)
+                free (reg[i].iid);
+            if (reg[i].pid != NULL)
+                free (reg[i].pid);
+            if (reg[i].mid != NULL)
+                free (reg[i].mid);
+            if (reg[i].sex != NULL)
+                free (reg[i].sex);
+            if (reg[i].phe != NULL)
+                free (reg[i].phe);
+            if (reg[i].pop != NULL)
+                free (reg[i].pop);
+            if (reg[i].reg != NULL)
+                free (reg[i].reg);
+        }
+        free (reg);
+    }
+
+    return;
 }
 
 

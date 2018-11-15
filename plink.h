@@ -5,6 +5,8 @@
  * 
  * Author: Daniel Garrigan <daniel.garrigan@ancestry.com>
  * 
+ * Based on original code from Keith Noto <knoto@ancestry.com>
+ * 
  * Git: https://github.ancestry.com/DNA-Science/libplink
  * 
  *********************************************************************/
@@ -69,7 +71,6 @@ typedef struct _bim_t
     uint64_t bp;      /* coordinate location in base pairs */
     char a0;          /* e.g., 'A','G'; represented by 0 and 1 in a .bed (or .hap) file, respectively (typically allele0 would be the major allele, but this may not be guaranteed).  Set to ALLELE_MISSING if the allele value is as of yet unknown. */
     char a1;
-    khash_t(integer) *index;
 } bim_t;
 
 /* Individual entry from FAM file */
@@ -81,7 +82,6 @@ typedef struct _fam_t
     char *mid;
     char *sex;
     char *phe;
-    khash_t(integer) *index;
 } fam_t;
 
 /* Individual entry from REG file */
@@ -94,8 +94,7 @@ typedef struct _reg_t
     char *sex;
     char *phe;
     char *pop;
-    char *reg;
-    khash_t(integer) *index;
+    char *reg; 
 } reg_t;
 
 /* Binary genotype data and associated functionality */
@@ -119,6 +118,9 @@ typedef struct _plink_t
     bim_t *bim;
     fam_t *fam;
     reg_t *reg;
+    khash_t(integer) *bim_index;
+    khash_t(integer) *fam_index;
+    khash_t(integer) *reg_index;
 } plink_t;
 
 /************************************************
@@ -131,11 +133,17 @@ extern bed_t *read_bed (const char *, uint64_t n_indiv, uint64_t n_snps, unsigne
 /* Write bed/hap to file, return number of bytes written */
 extern uint64_t write_bed (FILE *, const bed_t *);
 
+/* Deallocate memory for bed data structure */
+extern void destroy_bed (bed_t *);
+
 /* Read input bim file */
 extern bim_t *read_bim (const char *, size_t *);
 
 /* Index a bim dataset */
 extern khash_t(integer) *index_bim (const bim_t *, const size_t);
+
+/* Deallocate memory for bim data structure */
+extern void destroy_bim (bim_t *, const size_t);
 
 /* Write marker information to bim file */
 extern int write_bim (const char *, const bim_t *, const size_t);
@@ -146,6 +154,9 @@ extern fam_t *read_fam (const char *, size_t *);
 /* Index a fam dataset */
 extern khash_t(integer) *index_fam (const fam_t *, const size_t);
 
+/* Deallocate memory for fam data structure */
+extern void destroy_fam (fam_t *, const size_t);
+
 /* Write sample information to fam file */
 extern int write_fam (const char *, const fam_t *, const size_t);
 
@@ -154,6 +165,9 @@ extern reg_t *read_reg (const char *, size_t *);
 
 /* Index a reg data set */
 extern khash_t(integer) *index_reg (const reg_t *, const size_t);
+
+/* Deallocate memory for reg data structure */
+extern void destroy_reg (reg_t *, const size_t);
 
 /* Write region information to reg file */
 extern int write_reg (const char *, const reg_t *, const size_t);
@@ -166,13 +180,19 @@ extern int write_reg (const char *, const reg_t *, const size_t);
 /* Read all data from plink set into memory */
 extern plink_t *read_plink (const char *, const int, const int);
 
+/* Deallocate memory for plink_t data structure */
+extern void destroy_plink (plink_t *);
+
 /* Get haplotype string */
 extern char *hap2str (plink_t *, const uint64_t, const int);
 
 extern unsigned char *hap2uchar (plink_t *, const uint64_t, const int);
 
-/* Query the reg data with a sample id and get a region name back */
-extern char *query_reg (reg_t *, const char *);
+/* Query the reg data with a sample id and get a region name string back */
+extern char *query_reg (plink_t *, const char *);
+
+/* Query the reg data with a sample id and get a population name string back */
+extern char *query_pop (plink_t *p, const char *iid);
 
 /* Get array of unsigned long integers representing binary encoding of SNPs */
 extern uint64_t *hap2ulong (plink_t *, const uint64_t, const int);
