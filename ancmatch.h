@@ -18,6 +18,7 @@ typedef struct cmdl
     int with_vcf;
     int has_reg;
     int is_phased;
+    int nohaps;
     double minlen;
     char *popmap;
     char *outfile;

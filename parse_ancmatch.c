@@ -43,6 +43,7 @@ cmd_t *parse_cmdl(int argc, char *argv[])
     c->has_reg = 0;
     c->is_phased = 0;
     c->with_vcf = 0;
+    c->nohaps = 0;
     c->minlen = 0.5;
 
     /* Get mode argument */
@@ -397,6 +398,7 @@ int parse_view(int argc, char *argv[], cmd_t *c)
         /* Declare option table */
         static struct option long_options[] =
         {
+            { "nohaps",  no_argument,       NULL, 'n' },
             { "version", no_argument,       NULL, 'v' },
             { "help",    no_argument,       NULL, 'h' },
             {0, 0, 0, 0}
@@ -412,6 +414,9 @@ int parse_view(int argc, char *argv[], cmd_t *c)
         /* Assign option to variable */
         switch(g)
         {
+            case 'n':
+                c->nohaps = 1;
+                break;
             case 'v':
                 printf("ancmatch: %s\n", Version);
                 printf("libpbwt: %s\n", pbwt_version());
@@ -531,6 +536,7 @@ int print_view_usage(const char *msg)
     if (msg)
         printf("%s\n\n", msg);
     puts("Options:");
+    puts("  --nohaps            Omit haplotype states-- only print sample metadata");
     puts("  --version           Print version number and exit");
     puts("  --help              Display this help message and exit");
     putchar('\n');
