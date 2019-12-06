@@ -27,17 +27,6 @@ Options:
 ### convert function
 
 ```
-Usage: ancmatch coancestry [OPTION]... [PBWT FILE]
-
-Produce coancestry matrix for all samples in PBWT
-
-
-Options:
-  --minlen   FLOAT   Minimum match size (cM) [ Default: 0.5 cM ]
-  --version          Print version number and exit
-  --help             Display this help message and exit
-
-[dgarrigan@ip-10-158-17-28 ~]$ ancmatch convert --help
 Usage: ancmatch convert [OPTION]... [INPUT STUB]
 
 Convert PLINK or VCF to PBWT or vice versa
