@@ -28,12 +28,16 @@ int pbwt_convert_plink(cmd_t *c)
     /* Initialize plink data structure */
     p = plink_init(c->instub, c->has_reg, c->is_phased);
     if (p == NULL)
+    {
         return 1;
+    }
 
     /* Initialize pbwt structure */
     b = pbwt_init(p->nsnp, 2 * p->nsam);
     if (b == NULL)
+    {
         return 1;
+    }
 
     /* Iterate through all samples in the fam/reg */
     for (i = 0; i < p->nsam; ++i)
@@ -101,20 +105,30 @@ int pbwt_convert_vcf(cmd_t *c)
 
     /* Read the popmap file into a hash table */
     if ((popdb = read_popmap(c->popmap)) == NULL)
+    {
         return 1;
+    }
 
     /* Open the input file stream */
     if ((infile = hts_open(c->instub, "r")) == NULL)
+    {
         return 1;
+    }
 
     /* Read the VCF header into memory */
     if ((hdr = bcf_hdr_read(infile)) == NULL)
+    {
         return 1;
+    }
 
     /* Load VCF index file */
     if (hts_get_format(infile)->format == vcf)
+    {
         if ((tbx = tbx_index_load(c->instub)) == NULL)
+        {
             return 1;
+        }
+    }
 
     /* Get number of sites in VCF */
     seq = tbx ? tbx_seqnames(tbx, &nseq) : bcf_index_seqnames(idx, hdr, &nseq);
@@ -128,7 +142,9 @@ int pbwt_convert_vcf(cmd_t *c)
 
     /* Check whether all VCF input samples are in popmap file */
     if ((nsam = check_popmap(hdr, popdb)) < 0)
+    {
         return 1;
+    }
 
     /* Initialize memory to hold single VCF record */
     if ((rec = bcf_init()) == NULL)
@@ -141,7 +157,9 @@ int pbwt_convert_vcf(cmd_t *c)
     /* Initialize pbwt structure */
     b = pbwt_init(nsites, 2 * nsam);
     if (b == NULL)
+    {
         return 1;
+    }
 
     size_t site_counter = 0;
 
@@ -179,10 +197,15 @@ int pbwt_convert_vcf(cmd_t *c)
             for (j = 0; j < ngt; ++j)
             {
                 if (bcf_gt_is_missing(ptr[j]))
+                {
                     break;
+                }
 
                 if (ptr[j] == bcf_int32_vector_end)
+                {
                     break;
+                }
+
                 if (j % 2 == 0)
                 {
                     if (bcf_gt_allele(ptr[j]) == 1)
@@ -264,7 +287,9 @@ khash_t(string) *read_popmap(const char *popfile)
     /* Open popmap input file stream */
     instream = fopen(popfile, "r");
     if (!instream)
+    {
         return NULL;
+    }
 
     while (!feof(instream))
     {
@@ -279,11 +304,15 @@ khash_t(string) *read_popmap(const char *popfile)
         }
         it = kh_put(string, popdb, sid, &absent);
         if (absent)
+        {
             kh_key(popdb, it) = strdup(sid);
+        }
         kh_value(popdb, it) = strdup(pop);
     	counter++;
     }
+
     fclose(instream);
     fprintf(stderr, "ancmatch [INFO]: %d entries from %s read into pop database\n", counter, popfile);
+
     return popdb;
 }

@@ -30,14 +30,19 @@ int print_run_usage(const char *);
 
 cmd_t *parse_cmdl(int argc, char *argv[])
 {
-    char *mode;
-    cmd_t *c;
+    char *mode = NULL;
+    cmd_t *c = NULL;
     int (*parse_func)(int, char **, cmd_t *);
 
     opterr = 0;
 
     /* Allocate memory for command line data structure */
     c = (cmd_t *)malloc(sizeof(cmd_t));
+    if (c == NULL)
+    {
+        fputs("ancmatch [ERROR]: memory allocation failure", stderr);
+        return NULL;
+    }
 
     /* Initialize default values for command line options */
     c->has_reg = 0;
@@ -48,7 +53,9 @@ cmd_t *parse_cmdl(int argc, char *argv[])
 
     /* Get mode argument */
     if (argv[1])
+    {
         mode = strdup(argv[1]);
+    }
     else
     {
         print_main_usage(NULL);
@@ -99,7 +106,9 @@ cmd_t *parse_cmdl(int argc, char *argv[])
             print_main_usage(msg);
         }
         else
+        {
             print_main_usage("ancmatch [ERROR]: need to specify a command");
+        }
 
         return NULL;
     }
@@ -107,14 +116,20 @@ cmd_t *parse_cmdl(int argc, char *argv[])
     /* Call the command-specific parsing function */
     int r = (*parse_func)(argc, argv, c);
     if (r)
+    {
         return NULL;
+    }
 
     if (strcmp(mode, "convert") == 0)
     {
         if (c->with_vcf == 0)
+        {
             c->mode_func = &pbwt_convert_plink;
-        else 
+        }
+        else
+        {
             c->mode_func = &pbwt_convert_vcf;
+        }
     }
 
     /* Remove mode string from heap */
@@ -146,7 +161,9 @@ int parse_coancestry(int argc, char *argv[], cmd_t *c)
 
         /* We are at the end of the options */
         if (g == -1)
+        {
             break;
+        }
 
         /* Assign the option to variables */
         switch(g)
@@ -178,7 +195,9 @@ int parse_coancestry(int argc, char *argv[], cmd_t *c)
         return 1;
     }
     else
+    {
         c->instub = strdup(argv[optind]);
+    }
 
     return 0;
 }
@@ -210,7 +229,9 @@ int parse_convert(int argc, char *argv[], cmd_t *c)
 
         /* We are at the end of the options */
         if (g == -1)
+        {
             break;
+        }
 
         /* Assign the option to variables */
         switch(g)
@@ -254,7 +275,9 @@ int parse_convert(int argc, char *argv[], cmd_t *c)
         return 1;
     }
     else
+    {
         c->instub = strdup(argv[optind]);
+    }
 
     /* --out switch is actually mandatory */
     if (!c->outfile)
@@ -317,7 +340,9 @@ int parse_report(int argc, char *argv[], cmd_t *c)
         return 1;
     }
     else
+    {
         c->instub = strdup(argv[optind]);
+    }
 
     return 0;
 }
@@ -346,7 +371,9 @@ int parse_run(int argc, char *argv[], cmd_t *c)
 
         /* We are at the end of the options */
         if (g == -1)
+        {
             break;
+        }
 
         /* Assign the option to variables */
         switch(g)
@@ -381,7 +408,16 @@ int parse_run(int argc, char *argv[], cmd_t *c)
         return 1;
     }
     else
+    {
         c->instub = strdup(argv[optind]);
+    }
+
+    /* Check that a query sequence has been specified */
+    if (c->query == NULL)
+    {
+        print_run_usage("ancmatch [ERROR]: --query option is mandatory");
+        return 1;
+    }
 
     return 0;
 }
@@ -409,7 +445,9 @@ int parse_view(int argc, char *argv[], cmd_t *c)
 
         /* We are at the end of the options */
         if (g == -1)
+        {
             break;
+        }
 
         /* Assign option to variable */
         switch(g)
@@ -441,7 +479,9 @@ int parse_view(int argc, char *argv[], cmd_t *c)
         return 1;
     }
     else
+    {
         c->instub = strdup(argv[optind]);
+    }
 
     return 0;
 }
