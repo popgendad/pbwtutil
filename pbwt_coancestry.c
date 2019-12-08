@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "ancmatch.h"
+#include "pbwtmaster.h"
 
 int pbwt_coancestry(cmd_t *c)
 {
@@ -16,7 +16,7 @@ int pbwt_coancestry(cmd_t *c)
     b = pbwt_read(c->instub);
     if (b == NULL)
     {
-        fprintf(stderr, "ancmatch [ERROR]: cannot read data from %s\n", c->instub);
+        fprintf(stderr, "pbwtmaster [ERROR]: cannot read data from %s\n", c->instub);
         return 1;
     }
 

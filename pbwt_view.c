@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "ancmatch.h"
+#include "pbwtmaster.h"
 
 int pbwt_print(const pbwt_t *, const int);
 
@@ -53,7 +53,7 @@ int pbwt_print(const pbwt_t *b, const int nohaps)
         }
         else
         {
-            fprintf(stderr, "ancmatch [ERROR]: problem reading sample identifier with index %5zu\n", index);
+            fprintf(stderr, "pbwtmaster [ERROR]: problem reading sample identifier with index %5zu\n", index);
             return -1;
         }
 

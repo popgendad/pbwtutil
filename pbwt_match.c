@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "ancmatch.h"
+#include "pbwtmaster.h"
 
-int pbwt_run(cmd_t *c)
+int pbwt_match(cmd_t *c)
 {
     int v = 0;
     int no_query = 1;
@@ -24,7 +24,7 @@ int pbwt_run(cmd_t *c)
     b = pbwt_read(c->instub);
     if (b == NULL)
     {
-        fprintf(stderr, "ancmatch [ERROR]: cannot read data from %s\n", c->instub);
+        fprintf(stderr, "pbwtmaster [ERROR]: cannot read data from %s\n", c->instub);
         return 1;
     }
 
@@ -50,7 +50,7 @@ int pbwt_run(cmd_t *c)
 
     if (no_query)
     {
-        fprintf(stderr, "ancmatch [ERROR]: cannot find haplotype with id %s\n", c->query);
+        fprintf(stderr, "pbwtmaster [ERROR]: cannot find haplotype with id %s\n", c->query);
         return 1;
     }
 

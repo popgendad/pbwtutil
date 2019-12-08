@@ -5,13 +5,13 @@ LIBS    := -lz -lhts -lpbwt -lplink_lite
 SRCS    := $(wildcard *.c)
 OBJS    := $(patsubst %.c, %.o, $(SRCS))
 
-all: ancmatch
+all: pbwtmaster
 
-ancmatch: $(OBJS)
+pbwtmaster: $(OBJS)
 	$(CC) -O2 -o $@ $^ $(LIBS)
 
 %.o:%.c
 	$(CC) $(CFLAGS) -c $<
 
 clean:
-	rm *.o ancmatch
+	rm *.o pbwtmaster

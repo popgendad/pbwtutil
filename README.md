@@ -1,19 +1,19 @@
-## ancmatch
+## pbwtmaster
 
 Utilities for working with the PBWT format
 
-The `ancmatch` software leverages the `libpbwt` library to perfrom five main functions:
+The `pbwtmaster` software leverages the `libpbwt` library to perfrom five main functions:
 
 1. `coancestry`: produce a pairwise match sharing similarity matrix between all diploid individuals in the PBWT
 2. `convert`: convert a data set from either PLINK or VCF to the PBWT format
-3. `report`: report on basic statistics of a PBWT file
-4. `run`: run matching on a PBWT data set by marking a haplotype as the query
+4. `match`: run matching on a PBWT data set by marking a haplotype as the query
+3. `summary`: report on basic statistics of a PBWT file
 5. `view`: view the contents of a PBWT file
 
 ### coancestry function
 
 ```
-Usage: ancmatch coancestry [OPTION]... [PBWT FILE]
+Usage: pbwtmaster coancestry [OPTION]... [PBWT FILE]
 
 Produce coancestry matrix for all samples in PBWT
 
@@ -27,7 +27,7 @@ Options:
 ### convert function
 
 ```
-Usage: ancmatch convert [OPTION]... [INPUT STUB]
+Usage: pbwtmaster convert [OPTION]... [INPUT STUB]
 
 Convert PLINK or VCF to PBWT or vice versa
 
@@ -43,21 +43,9 @@ Options:
   --help              Display this help message and exit
 ```
 
-### report function
+### match function
 ```
-Usage: ancmatch report [OPTION]... [INPUT STUB]
-
-Print report describing pbwt file
-
-
-Options:
-  --version           Print version number and exit
-  --help              Display this help message and exit
-```
-
-### run function
-```
-Usage: ancmatch run [OPTION]... [PBWT FILE]
+Usage: pbwtmaster match [OPTION]... [PBWT FILE]
 
 Retrieve set-maximal matches in PBWT using query
 
@@ -69,10 +57,22 @@ Options:
   --help             Display this help message and exit
 ```
 
+### summary function
+```
+Usage: pbwtmaster summary [OPTION]... [INPUT STUB]
+
+Print report describing pbwt file
+
+
+Options:
+  --version           Print version number and exit
+  --help              Display this help message and exit
+```
+
 ### view function
 
 ```
-Usage: ancmatch view [OPTION]... [PBWT FILE]
+Usage: pbwtmaster view [OPTION]... [PBWT FILE]
 
 Print contents of .pbwt file to stdout
 
@@ -82,3 +82,4 @@ Options:
   --version           Print version number and exit
   --help              Display this help message and exit
   ```
+  

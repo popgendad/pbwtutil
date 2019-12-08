@@ -1,5 +1,5 @@
-#ifndef ANCMATCH_H
-#define ANCMATCH_H
+#ifndef PBWTMASTER_H
+#define PBWTMASTER_H
 
 #include <htslib/khash.h>
 #include <htslib/vcf.h>
@@ -7,7 +7,7 @@
 
 /* Define mode mappings */
 
-enum Mode {COANCESTRY, CONVERT, REPORT, RUN, VIEW};
+enum Mode {COANCESTRY, CONVERT, MATCH, SUMMARY, VIEW};
 
 
 /* Define data structures */
@@ -30,7 +30,7 @@ typedef struct cmdl
 
 /* Function prototypes */
 
-extern cmd_t *parse_cmdl(int argc, char *argv[]);
+extern cmd_t *parse_args(int argc, char *argv[]);
 
 extern int pbwt_coancestry(cmd_t *);
 
@@ -38,9 +38,9 @@ extern int pbwt_convert_plink(cmd_t *);
 
 extern int pbwt_convert_vcf(cmd_t *);
 
-extern int pbwt_report(cmd_t *);
+extern int pbwt_match(cmd_t *);
 
-extern int pbwt_run(cmd_t *);
+extern int pbwt_summary(cmd_t *);
 
 extern int pbwt_view(cmd_t *);
 

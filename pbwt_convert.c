@@ -3,7 +3,7 @@
 #include <string.h>
 #include <htslib/tbx.h>
 #include <plink_lite.h>
-#include "ancmatch.h"
+#include "pbwtmaster.h"
 
 khash_t(string) *read_popmap(const char *);
 int check_popmap(const bcf_hdr_t *, const khash_t(string) *);
@@ -76,7 +76,7 @@ int pbwt_convert_plink(cmd_t *c)
     v = pbwt_write(outfile, b);
     if (v != 0)
     {
-        fputs("ancmatch [ERROR]: Failed to write pbwt to disk", stderr);
+        fputs("pbwtmaster [ERROR]: Failed to write pbwt to disk", stderr);
         return 1;
     }
 
@@ -232,7 +232,7 @@ int pbwt_convert_vcf(cmd_t *c)
     v = pbwt_write(c->outfile, b);
     if (v != 0)
     {
-     	fputs("ancmatch [ERROR]: Failed to write pbwt to disk", stderr);
+     	fputs("pbwtmaster [ERROR]: Failed to write pbwt to disk", stderr);
         return 1;
     }
 
@@ -264,7 +264,7 @@ int check_popmap(const bcf_hdr_t *h, const khash_t(string) *pdb)
         it = kh_get(string, pdb, sid);
         if (it == kh_end(pdb))
         {
-            fprintf(stderr, "ancmatch [ERROR]: sample not in population database: %s\n", sid);
+            fprintf(stderr, "pbwtmaster [ERROR]: sample not in population database: %s\n", sid);
             return -1;
         }
     }
@@ -299,7 +299,7 @@ khash_t(string) *read_popmap(const char *popfile)
         ns = fscanf(instream, "%s\t%s\n", sid, pop);
         if (ns != 2)
         {
-            fputs("ancmatch [ERROR] cannot read popmap file\n", stderr);
+            fputs("pbwtmaster [ERROR] cannot read popmap file\n", stderr);
             return NULL;
         }
         it = kh_put(string, popdb, sid, &absent);
@@ -312,7 +312,7 @@ khash_t(string) *read_popmap(const char *popfile)
     }
 
     fclose(instream);
-    fprintf(stderr, "ancmatch [INFO]: %d entries from %s read into pop database\n", counter, popfile);
+    fprintf(stderr, "pbwtmaster [INFO]: %d entries from %s read into pop database\n", counter, popfile);
 
     return popdb;
 }

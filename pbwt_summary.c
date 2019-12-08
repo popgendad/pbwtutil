@@ -1,10 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "ancmatch.h"
+#include "pbwtmaster.h"
 
 
-int
-pbwt_report (cmd_t *c)
+int pbwt_summary(cmd_t *c)
 {
     int v = 0;
     size_t orig_size = 0;
