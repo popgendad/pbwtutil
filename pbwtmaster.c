@@ -2,13 +2,13 @@
 
 int main(int argc, char **argv)
 {
-    cmd_t *c = parse_args(argc, argv);
+    cmd_t *c = NULL;
+ 
+    c = parse_args(argc, argv);
     if (!c)
     {
         return -1;
     }
-    else
-    {
-        return (*c->mode_func)(c);
-    }
+
+    return (*c->mode_func)(c);
 }

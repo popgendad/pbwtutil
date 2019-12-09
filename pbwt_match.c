@@ -9,7 +9,6 @@ int pbwt_match(cmd_t *c)
     int no_query = 1;
     size_t i = 0;
     size_t nregs = 0;
-    size_t nsites = 0;
     size_t qid = 0;
     khint_t k = 0;
     khash_t(floats) *result = NULL;
@@ -18,18 +17,14 @@ int pbwt_match(cmd_t *c)
 
     /* Initialize hash for results */
     result = kh_init(floats);
-    v = 0;
 
     /* Read in the pbwt file from disk */
     b = pbwt_read(c->instub);
     if (b == NULL)
     {
         fprintf(stderr, "pbwtmaster [ERROR]: cannot read data from %s\n", c->instub);
-        return 1;
+        return -1;
     }
-
-	/* Unless specified otherwise, indicate penultimate site is end site */
-    nsites = b->nsite;
 
     /* Uncompress the haplotype data */
     pbwt_uncompress(b);
@@ -51,7 +46,7 @@ int pbwt_match(cmd_t *c)
     if (no_query)
     {
         fprintf(stderr, "pbwtmaster [ERROR]: cannot find haplotype with id %s\n", c->query);
-        return 1;
+        return -1;
     }
 
     /* Set query id */
@@ -59,6 +54,11 @@ int pbwt_match(cmd_t *c)
 
     /* Find all set-maximal matches */
     v = pbwt_query_match(b, c->minlen);
+    if (v < 0)
+    {
+        fputs("pbwtmaster [ERROR]: error retrieving matches", stderr);
+        return -1;
+    }
 
     if (c->match_all)
     {
@@ -66,10 +66,17 @@ int pbwt_match(cmd_t *c)
     }
     else
     {
-        match_regsearch(b, b->match, result, 0, nsites);
+        match_regsearch(b, b->match, result, 0, b->nsite);
 
-        /* Print hash */
+        /* Get hash of regions */
         reglist = pbwt_get_reglist(b, &nregs);
+        if (reglist == NULL)
+        {
+            fputs("pbwtmaster [ERROR]: cannot retrieve reg list", stderr);
+            return -1;
+        }
+
+        /* Print region list to STDOUT */
         for (i = 0; i < nregs; ++i)
         {
             k = kh_get(floats, result, reglist[i]);
@@ -87,5 +94,5 @@ int pbwt_match(cmd_t *c)
     free(c->query);
     free(c);
 
-    return v;
+    return 0;
 }

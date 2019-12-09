@@ -9,12 +9,33 @@ int pbwt_view(cmd_t *c)
     int v = 0;
     pbwt_t *b = NULL;
 
+    /* Read PBWT file data into memory */
     b = pbwt_read(c->instub);
+    if (b == NULL)
+    {
+        fprintf(stderr, "pbwtmaster [ERROR]: cannot read data from %s\n", c->instub);
+        return -1;
+    }
+
+    /* Uncompress haplotype data */
     v = pbwt_uncompress(b);
+    if (v < 0)
+    {
+        fputs("pbwtmaster [ERROR]: error uncompressing haplotype data", stderr);
+        return -1;
+    }
+
+    /* Print the PBWT data structure */
     v = pbwt_print(b, c->nohaps);
+    if (v < 0)
+    {
+        return -1;
+    }
+
+    /* Clean up allocated memory */
     pbwt_destroy(b);
 
-    return v;
+    return 0;
 }
 
 int pbwt_print(const pbwt_t *b, const int nohaps)

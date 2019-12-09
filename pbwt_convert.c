@@ -29,14 +29,14 @@ int pbwt_convert_plink(cmd_t *c)
     p = plink_init(c->instub, c->has_reg, c->is_phased);
     if (p == NULL)
     {
-        return 1;
+        return -1;
     }
 
     /* Initialize pbwt structure */
     b = pbwt_init(p->nsnp, 2 * p->nsam);
     if (b == NULL)
     {
-        return 1;
+        return -1;
     }
 
     /* Iterate through all samples in the fam/reg */
@@ -77,11 +77,12 @@ int pbwt_convert_plink(cmd_t *c)
     if (v != 0)
     {
         fputs("pbwtmaster [ERROR]: Failed to write pbwt to disk", stderr);
-        return 1;
+        return -1;
     }
 
     /* Free memory for the data structure */
     pbwt_destroy(b);
+    free(outfile);
 
     return 0;
 }
@@ -236,16 +237,16 @@ int pbwt_convert_vcf(cmd_t *c)
         return 1;
     }
 
-    /* Free memory for the data structure */
+    /* Clean up allocated memory */
     pbwt_destroy(b);
-
-    /* Close up shop */
     free(seq);
     bcf_hdr_destroy(hdr);
     hts_close(infile);
     bcf_destroy(rec);
     tbx_destroy(tbx);
     hts_idx_destroy(idx);
+    free(c->query);
+    free(c);
 
     return 0;
 }
