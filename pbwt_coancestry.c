@@ -28,13 +28,20 @@ int pbwt_coancestry(cmd_t *c)
 
     /* Initialize coancestry matrix */
     cmatrix = (double **)malloc(b->nsam * sizeof(double *));
+    if (cmatrix == NULL)
+    {
+        fputs("pbwtmater [ERROR]: memory allocation error", stderr);
+        return 1;
+    }
     for (i = 0; i < b->nsam; ++i)
     {
         cmatrix[i] = (double *)malloc(b->nsam * sizeof(double));
-        for (j = 0; j < b->nsam; ++j)
+        if (cmatrix[i] == NULL)
         {
-            cmatrix[i][j] = 0.0;
+            fputs("pbwtmaster [ERROR]: memory allocation error", stderr);
+            return 1;
         }
+        memset(cmatrix[i], 0, b->nsam * sizeof(double));
     }
 
     /* Find matches to fill coancestry matrix */
