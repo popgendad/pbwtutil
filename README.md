@@ -53,6 +53,7 @@ Retrieve set-maximal matches in PBWT using query
 Options:
   --minlen   FLOAT   Minimum match size (cM) [ Default: 0.5 cM ]
   --query    STR     String identifier of haplotypes to mark as query
+  --all              Print a list of all matches with query
   --version          Print version number and exit
   --help             Display this help message and exit
 ```

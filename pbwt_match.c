@@ -59,20 +59,27 @@ int pbwt_match(cmd_t *c)
 
     /* Find all set-maximal matches */
     v = pbwt_query_match(b, c->minlen);
-    match_regsearch(b, b->match, result, 0, nsites);
 
-    /* Print hash */
-    reglist = pbwt_get_reglist(b, &nregs);
-    for (i = 0; i < nregs; ++i)
+    if (c->match_all)
     {
-        k = kh_get(floats, result, reglist[i]);
-        if (kh_exist(result, k) && k != kh_end(result))
-            fprintf(stdout, "%s\t%s\t%s\t%s\t%1.5lf\n", c->instub, b->sid[qid], b->reg[qid], reglist[i], kh_value(result, k));
-        else
-            fprintf(stdout, "%s\t%s\t%s\t%s\t0.00000\n", c->instub, b->sid[qid], b->reg[qid], reglist[i]);
+        match_print(b, b->match);
     }
+    else
+    {
+        match_regsearch(b, b->match, result, 0, nsites);
 
-    free(reglist);
+        /* Print hash */
+        reglist = pbwt_get_reglist(b, &nregs);
+        for (i = 0; i < nregs; ++i)
+        {
+            k = kh_get(floats, result, reglist[i]);
+            if (kh_exist(result, k) && k != kh_end(result))
+                fprintf(stdout, "%s\t%s\t%s\t%s\t%1.5lf\n", c->instub, b->sid[qid], b->reg[qid], reglist[i], kh_value(result, k));
+            else
+                fprintf(stdout, "%s\t%s\t%s\t%s\t0.00000\n", c->instub, b->sid[qid], b->reg[qid], reglist[i]);
+        }
+        free(reglist);
+    }
 
     /* Clean up allocated memory */
     pbwt_destroy(b);

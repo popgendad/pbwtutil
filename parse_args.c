@@ -48,6 +48,7 @@ cmd_t *parse_args(int argc, char *argv[])
     c->has_reg = 0;
     c->is_phased = 0;
     c->with_vcf = 0;
+    c->match_all = 0;
     c->nohaps = 0;
     c->minlen = 0.5;
 
@@ -361,13 +362,14 @@ int parse_match(int argc, char *argv[], cmd_t *c)
         {
             { "query",   required_argument, NULL, 'q' },
             { "minlen",  required_argument, NULL, 'm' },
+            { "all",     no_argument,       NULL, 'a' },
             { "version", no_argument,       NULL, 'v' },
             { "help",    no_argument,       NULL, 'h' },
             {0, 0, 0, 0}
         };
 
         /* Parse the option */
-        g = getopt_long(argc, argv, "vhq:m:", long_options, &option_index);
+        g = getopt_long(argc, argv, "vhaq:m:", long_options, &option_index);
 
         /* We are at the end of the options */
         if (g == -1)
@@ -383,6 +385,9 @@ int parse_match(int argc, char *argv[], cmd_t *c)
                 break;
             case 'm':
                 c->minlen = atof(optarg);
+                break;
+            case 'a':
+                c->match_all = 1;
                 break;
             case 'v':
                 printf("pbwtmaster: %s\n", Version);
@@ -548,6 +553,7 @@ int print_match_usage(const char *msg)
     puts("Options:");
     puts("  --minlen   FLOAT   Minimum match size (cM) [ Default: 0.5 cM ]");
     puts("  --query    STR     String identifier of haplotypes to mark as query");
+    puts("  --all              Print a list of all matches with query");
     puts("  --version          Print version number and exit");
     puts("  --help             Display this help message and exit");
     putchar('\n');
