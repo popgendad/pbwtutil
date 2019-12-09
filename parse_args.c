@@ -116,7 +116,7 @@ cmd_t *parse_args(int argc, char *argv[])
 
     /* Call the command-specific parsing function */
     int r = (*parse_func)(argc, argv, c);
-    if (r)
+    if (r < 0)
     {
         return NULL;
     }
@@ -175,17 +175,17 @@ int parse_coancestry(int argc, char *argv[], cmd_t *c)
             case 'v':
                 printf("pbwtmaster: %s\n", Version);
                 printf("libpbwt: %s\n", pbwt_version());
-                return 1;
+                return -1;
             case 'h':
                 print_coancestry_usage(NULL);
-                return 1;
+                return -1;
             case '?':
                 sprintf(msg, "pbwtmaster [ERROR]: unknown option \"-%c\".\n", optopt);
                 print_coancestry_usage(msg);
-                return 1;
+                return -1;
             default:
                 print_coancestry_usage(NULL);
-                return 1;
+                return -1;
         }
     }
 
@@ -193,7 +193,7 @@ int parse_coancestry(int argc, char *argv[], cmd_t *c)
     if (optind != argc - 1)
     {
         print_coancestry_usage("pbwtmaster [ERROR]: need input file name as mandatory argument");
-        return 1;
+        return -1;
     }
     else
     {
@@ -255,17 +255,17 @@ int parse_convert(int argc, char *argv[], cmd_t *c)
             case 'v':
                 printf("pbwtmaster: %s\n", Version);
                 printf("libpbwt: %s\n", pbwt_version());
-                return 1;
+                return -1;
             case 'h':
                 print_convert_usage(NULL);
-                return 1;
+                return -1;
             case '?':
                 sprintf(msg, "pbwtmaster [ERROR]: unknown option \"-%c\".\n", optopt);
                 print_convert_usage(msg);
-                return 1;
+                return -1;
             default:
                 print_convert_usage(NULL);
-                return 1;
+                return -1;
         }
     }
 
@@ -273,7 +273,7 @@ int parse_convert(int argc, char *argv[], cmd_t *c)
     if (optind != argc - 1)
     {
         print_convert_usage("pbwtmaster [ERROR]: need input stub as mandatory argument");
-        return 1;
+        return -1;
     }
     else
     {
@@ -284,7 +284,7 @@ int parse_convert(int argc, char *argv[], cmd_t *c)
     if (!c->outfile)
     {
         print_convert_usage("pbwtmaster [ERROR]: --out <STR> is a mandatory argument for convert");
-        return 1;
+        return -1;
     }
 
     return 0;
@@ -320,17 +320,17 @@ int parse_summary(int argc, char *argv[], cmd_t *c)
             case 'v':
                 printf("pbwtmaster: %s\n", Version);
                 printf("libpbwt: %s\n", pbwt_version());
-                return 1;
+                return -1;
             case 'h':
                 print_summary_usage(NULL);
-                return 1;
+                return -1;
             case '?':
                 sprintf(msg, "pbwtmaster [ERROR]: unknown option \"-%c\".\n", optopt);
                 print_summary_usage(msg);
-                return 1;
+                return -1;
             default:
                 print_summary_usage(NULL);
-                return 1;
+                return -1;
         }
     }
 
@@ -338,7 +338,7 @@ int parse_summary(int argc, char *argv[], cmd_t *c)
     if (optind != argc - 1)
     {
         print_summary_usage ("pbwtmaster [ERROR]: need input stub as mandatory argument");
-        return 1;
+        return -1;
     }
     else
     {
@@ -392,17 +392,17 @@ int parse_match(int argc, char *argv[], cmd_t *c)
             case 'v':
                 printf("pbwtmaster: %s\n", Version);
                 printf("libpbwt: %s\n", pbwt_version());
-                return 1;
+                return -1;
             case 'h':
                 print_match_usage(NULL);
-                return 1;
+                return -1;
             case '?':
                 sprintf(msg, "pbwtmaster [ERROR]: unknown option \"-%c\".\n", optopt);
                 print_match_usage(msg);
-                return 1;
+                return -1;
             default:
                 print_match_usage(NULL);
-                return 1;
+                return -1;
         }
     }
 
@@ -410,7 +410,7 @@ int parse_match(int argc, char *argv[], cmd_t *c)
     if (optind != argc - 1)
     {
         print_match_usage("pbwtmaster [ERROR]: need input file name as mandatory argument");
-        return 1;
+        return -1;
     }
     else
     {
@@ -421,7 +421,7 @@ int parse_match(int argc, char *argv[], cmd_t *c)
     if (c->query == NULL)
     {
         print_match_usage("pbwtmaster [ERROR]: --query option is mandatory");
-        return 1;
+        return -1;
     }
 
     return 0;
@@ -463,17 +463,17 @@ int parse_view(int argc, char *argv[], cmd_t *c)
             case 'v':
                 printf("pbwtmaster: %s\n", Version);
                 printf("libpbwt: %s\n", pbwt_version());
-                return 0;
+                return -1;
             case 'h':
                 print_view_usage(NULL);
-                return 1;
+                return -1;
             case '?':
                 sprintf(msg, "pbwtmaster [ERROR]: unknown option \"-%c\".\n", optopt);
                 print_view_usage(msg);
-                return 1;
+                return -1;
             default:
                 print_view_usage(NULL);
-                return 1;
+                return -1;
         }
     }
 
@@ -481,7 +481,7 @@ int parse_view(int argc, char *argv[], cmd_t *c)
     if (optind != argc - 1)
     {
         print_view_usage("pbwtmaster [ERROR]: need input stub as mandatory argument");
-        return 1;
+        return -1;
     }
     else
     {
@@ -497,7 +497,9 @@ int print_main_usage(const char *msg)
     puts("Utilities for working with the PBWT format\n");
     putchar('\n');
     if (msg)
+    {
         printf ("%s\n\n", msg);
+    }
     puts("Commands:");
     puts("  coancesty           Construct coancestry matrix between individuals");
     puts("  convert             Convert PLINK or VCF to PBWT or vice versa");
@@ -514,7 +516,9 @@ int print_coancestry_usage(const char *msg)
     puts("Produce coancestry matrix for all samples in PBWT\n");
     putchar('\n');
     if (msg)
+    {
         printf("%s\n\n", msg);
+    }
     puts("Options:");
     puts("  --minlen   FLOAT   Minimum match size (cM) [ Default: 0.5 cM ]");
     puts("  --version          Print version number and exit");
@@ -529,7 +533,9 @@ int print_convert_usage(const char *msg)
     puts("Convert PLINK or VCF to PBWT or vice versa\n");
     putchar('\n');
     if (msg)
+    {
         printf("%s\n\n", msg);
+    }
     puts("Options:");
     puts("  --phased            Input data are phased");
     puts("  --vcf               Input file is VCF format");
@@ -549,7 +555,9 @@ int print_match_usage(const char *msg)
     puts("Retrieve set-maximal matches in PBWT using query\n");
     putchar('\n');
     if (msg)
+    {
         printf("%s\n\n", msg);
+    }
     puts("Options:");
     puts("  --minlen   FLOAT   Minimum match size (cM) [ Default: 0.5 cM ]");
     puts("  --query    STR     String identifier of haplotypes to mark as query");
@@ -566,7 +574,9 @@ int print_summary_usage(const char *msg)
     puts("Print summary describing pbwt file\n");
     putchar('\n');
     if (msg)
+    {
         printf ("%s\n\n", msg);
+    }
     puts("Options:");
     puts("  --version           Print version number and exit");
     puts("  --help              Display this help message and exit");
@@ -580,7 +590,9 @@ int print_view_usage(const char *msg)
     puts("Print contents of .pbwt file to stdout\n");
     putchar('\n');
     if (msg)
+    {
         printf("%s\n\n", msg);
+    }
     puts("Options:");
     puts("  --nohaps            Omit haplotype states-- only print sample metadata");
     puts("  --version           Print version number and exit");
