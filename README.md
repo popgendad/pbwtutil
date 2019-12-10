@@ -66,6 +66,7 @@ Print report describing pbwt file
 
 
 Options:
+  --regcount          Print region sizes
   --version           Print version number and exit
   --help              Display this help message and exit
 ```
