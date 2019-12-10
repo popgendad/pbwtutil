@@ -177,6 +177,8 @@ int parse_coancestry(int argc, char *argv[], cmd_t *c)
             case 'v':
                 printf("pbwtmaster: %s\n", Version);
                 printf("libpbwt: %s\n", pbwt_version());
+                printf("libplink_lite: %s\n", plink_version());
+                printf("htslib: %s\n", hts_version());
                 return -1;
             case 'h':
                 print_coancestry_usage(NULL);
@@ -257,6 +259,8 @@ int parse_convert(int argc, char *argv[], cmd_t *c)
             case 'v':
                 printf("pbwtmaster: %s\n", Version);
                 printf("libpbwt: %s\n", pbwt_version());
+                printf("libplink_lite: %s\n", plink_version());
+                printf("htslib: %s\n", hts_version());
                 return -1;
             case 'h':
                 print_convert_usage(NULL);
@@ -326,6 +330,8 @@ int parse_summary(int argc, char *argv[], cmd_t *c)
             case 'v':
                 printf("pbwtmaster: %s\n", Version);
                 printf("libpbwt: %s\n", pbwt_version());
+                printf("libplink_lite: %s\n", plink_version());
+                printf("htslib: %s\n", hts_version());
                 return -1;
             case 'h':
                 print_summary_usage(NULL);
@@ -398,6 +404,8 @@ int parse_match(int argc, char *argv[], cmd_t *c)
             case 'v':
                 printf("pbwtmaster: %s\n", Version);
                 printf("libpbwt: %s\n", pbwt_version());
+                printf("libplink_lite: %s\n", plink_version());
+                printf("htslib: %s\n", hts_version());
                 return -1;
             case 'h':
                 print_match_usage(NULL);
@@ -473,6 +481,8 @@ int parse_view(int argc, char *argv[], cmd_t *c)
             case 'v':
                 printf("pbwtmaster: %s\n", Version);
                 printf("libpbwt: %s\n", pbwt_version());
+                printf("libplink_lite: %s\n", plink_version());
+                printf("htslib: %s\n", hts_version());
                 return -1;
             case 'h':
                 print_view_usage(NULL);
