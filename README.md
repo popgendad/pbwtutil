@@ -80,6 +80,7 @@ Print contents of .pbwt file to stdout
 
 Options:
   --nohaps            Omit haplotype states-- only print sample metadata
+  --sites             Print only site information
   --version           Print version number and exit
   --help              Display this help message and exit
   ```

@@ -51,6 +51,7 @@ cmd_t *parse_args(int argc, char *argv[])
     c->match_all = 0;
     c->nohaps = 0;
     c->minlen = 0.5;
+    c->only_sites = 0;
 
     /* Get mode argument */
     if (argv[1])
@@ -337,7 +338,7 @@ int parse_summary(int argc, char *argv[], cmd_t *c)
     /* Parse non-optioned arguments */
     if (optind != argc - 1)
     {
-        print_summary_usage ("pbwtmaster [ERROR]: need input stub as mandatory argument");
+        print_summary_usage("pbwtmaster [ERROR]: need input stub as mandatory argument");
         return -1;
     }
     else
@@ -439,6 +440,7 @@ int parse_view(int argc, char *argv[], cmd_t *c)
         /* Declare option table */
         static struct option long_options[] =
         {
+            { "sites",   no_argument,       NULL, 's' },
             { "nohaps",  no_argument,       NULL, 'n' },
             { "version", no_argument,       NULL, 'v' },
             { "help",    no_argument,       NULL, 'h' },
@@ -446,7 +448,7 @@ int parse_view(int argc, char *argv[], cmd_t *c)
         };
 
         /* Parse options */
-        g = getopt_long(argc, argv, "hv", long_options, &option_index);
+        g = getopt_long(argc, argv, "snhv", long_options, &option_index);
 
         /* We are at the end of the options */
         if (g == -1)
@@ -459,6 +461,9 @@ int parse_view(int argc, char *argv[], cmd_t *c)
         {
             case 'n':
                 c->nohaps = 1;
+                break;
+            case 's':
+                c->only_sites = 1;
                 break;
             case 'v':
                 printf("pbwtmaster: %s\n", Version);
@@ -595,6 +600,7 @@ int print_view_usage(const char *msg)
     }
     puts("Options:");
     puts("  --nohaps            Omit haplotype states-- only print sample metadata");
+    puts("  --sites             Print only site information");
     puts("  --version           Print version number and exit");
     puts("  --help              Display this help message and exit");
     putchar('\n');

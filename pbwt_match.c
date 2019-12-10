@@ -1,17 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include "pbwtmaster.h"
 
 int pbwt_match(cmd_t *c)
 {
     int v = 0;
-    int no_query = 1;
     size_t i = 0;
     size_t nregs = 0;
     size_t qid = 0;
     khint_t k = 0;
     khash_t(floats) *result = NULL;
+    khash_t(integer) *sdict = NULL;
     char **reglist = NULL;
     pbwt_t *b = NULL;
 
@@ -29,28 +28,28 @@ int pbwt_match(cmd_t *c)
     /* Uncompress the haplotype data */
     pbwt_uncompress(b);
 
-    /* If no query name is given, pull index of query */
-	for (i = 0; i < b->nsam; ++i)
-	{
-		if (strcmp(c->query, b->sid[i]) == 0)
-		{
-			qid = i;
-            no_query = 0;
-		}
-        else
-        {
-            b->is_query[i] = 0;
-        }
-	}
+    /* Make dictionary of sample identifiers and their indices */
+    sdict = pbwt_get_sampdict(b);
+    if (sdict == NULL)
+    {
+        fputs("pbwtmaster [ERROR]: cannot construct sample identifier dictionary", stderr);
+        return -1;
+    }
 
-    if (no_query)
+    /* Query user-input sample identifier */
+    k = kh_get(integer, sdict, c->query);
+
+    /* If sample ID is present, mark haplotype as query */
+    if (kh_exist(sdict, k) && k != kh_end(sdict))
+    {
+        qid = kh_value(sdict, k);
+        b->is_query[qid] = TRUE;
+    }
+    else
     {
         fprintf(stderr, "pbwtmaster [ERROR]: cannot find haplotype with id %s\n", c->query);
         return -1;
     }
-
-    /* Set query id */
-    b->is_query[qid] = 1;
 
     /* Find all set-maximal matches */
     v = pbwt_query_match(b, c->minlen);
@@ -81,9 +80,13 @@ int pbwt_match(cmd_t *c)
         {
             k = kh_get(floats, result, reglist[i]);
             if (kh_exist(result, k) && k != kh_end(result))
+            {
                 fprintf(stdout, "%s\t%s\t%s\t%s\t%1.5lf\n", c->instub, b->sid[qid], b->reg[qid], reglist[i], kh_value(result, k));
+            }
             else
+            {
                 fprintf(stdout, "%s\t%s\t%s\t%s\t0.00000\n", c->instub, b->sid[qid], b->reg[qid], reglist[i]);
+            }
         }
         free(reglist);
     }
@@ -91,6 +94,7 @@ int pbwt_match(cmd_t *c)
     /* Clean up allocated memory */
     pbwt_destroy(b);
     kh_destroy(floats, result);
+    kh_destroy(integer, sdict);
     free(c->query);
     free(c);
 
