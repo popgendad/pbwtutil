@@ -52,6 +52,7 @@ cmd_t *parse_args(int argc, char *argv[])
     c->nohaps = 0;
     c->minlen = 0.5;
     c->only_sites = 0;
+    c->reg_count = 0;
 
     /* Get mode argument */
     if (argv[1])
@@ -303,13 +304,14 @@ int parse_summary(int argc, char *argv[], cmd_t *c)
         /* Declare the option table */
         static struct option long_options[] =
         {
+            { "regcount", no_argument,      NULL, 'r' },
             { "version", no_argument,       NULL, 'v' },
             { "help",    no_argument,       NULL, 'h' },
             {0, 0, 0, 0}
         };
 
         /* Parse the option */
-        g = getopt_long(argc, argv, "vh", long_options, &option_index);
+        g = getopt_long(argc, argv, "rvh", long_options, &option_index);
 
         /* We are at the end of the options */
         if (g == -1)
@@ -318,6 +320,9 @@ int parse_summary(int argc, char *argv[], cmd_t *c)
         /* Assign the option to variables */
         switch(g)
         {
+            case 'r':
+                c->reg_count = 1;
+                break;
             case 'v':
                 printf("pbwtmaster: %s\n", Version);
                 printf("libpbwt: %s\n", pbwt_version());
@@ -583,6 +588,7 @@ int print_summary_usage(const char *msg)
         printf ("%s\n\n", msg);
     }
     puts("Options:");
+    puts("  --regcount          Print region sizes");
     puts("  --version           Print version number and exit");
     puts("  --help              Display this help message and exit");
     putchar('\n');

@@ -21,6 +21,7 @@ typedef struct cmdl
     int nohaps;
     int match_all;
     int only_sites;
+    int reg_count;
     double minlen;
     char *popmap;
     char *outfile;
