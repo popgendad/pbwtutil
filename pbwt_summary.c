@@ -39,15 +39,21 @@ int pbwt_summary(cmd_t *c)
     printf("Number of regions: %d\n", kh_size(regcount));
     printf("Size of compressed data:\t%zu\n", orig_size);
     printf("Size of uncompressed data:\t%zu\n", b->datasize);
-    putchar('\n');
-    printf("Region\tCount\n");
-    for (it = kh_begin(regcount); it != kh_end(regcount); ++it)
+
+    /* If user specifies regcount option */
+    if (c->reg_count)
     {
-        if (kh_exist(regcount, it))
+        putchar('\n');
+        printf("Region\tCount\n");
+        for (it = kh_begin(regcount); it != kh_end(regcount); ++it)
         {
-            printf("%s\t%lu\n", kh_key(regcount, it), kh_value(regcount, it));
+            if (kh_exist(regcount, it))
+            {
+                printf("%s\t%lu\n", kh_key(regcount, it), kh_value(regcount, it));
+            }
         }
     }
+
     /* Clean up allocated memory */
     pbwt_destroy(b);
     free(c->query);

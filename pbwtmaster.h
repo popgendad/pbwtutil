@@ -20,6 +20,7 @@ typedef struct cmdl
     int is_phased;
     int nohaps;
     int match_all;
+    int reg_count;
     double minlen;
     char *popmap;
     char *outfile;
