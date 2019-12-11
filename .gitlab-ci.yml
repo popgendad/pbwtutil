@@ -18,6 +18,6 @@ build:
   stage: build
   script:
     - make
-    - ./pbwtmaster summary /libpbwt/test/HumanOriginsExample.pbwt 0.5 200 0 729
+    - ./pbwtmaster summary /builds/evolgen/libpbwt/test/HumanOriginsExample.pbwt 0.5 200 0 729
   only:
     - tags
