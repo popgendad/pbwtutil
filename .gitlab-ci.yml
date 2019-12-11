@@ -12,12 +12,13 @@ before_script:
   - cd libpbwt
   - make
   - make install
+  - cp test/HumanOriginsExample.pbwt /
   - cd ..
 
 build:
   stage: build
   script:
     - make
-    - ./pbwtmaster summary /builds/evolgen/libpbwt/test/HumanOriginsExample.pbwt 0.5 200 0 729
+    - ./pbwtmaster summary /HumanOriginsExample.pbwt
   only:
     - tags
