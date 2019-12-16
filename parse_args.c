@@ -545,7 +545,7 @@ int print_coancestry_usage(const char *msg)
         printf("%s\n\n", msg);
     }
     puts("Options:");
-    puts("  -adjlist           Output graph-based adjacency list [ Default: False ]");
+    puts("  --adjlist          Output graph-based adjacency list [ Default: False ]");
     puts("  --minlen   FLOAT   Minimum match size (cM) [ Default: 0.5 cM ]");
     puts("  --version          Print version number and exit");
     puts("  --help             Display this help message and exit");
