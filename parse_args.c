@@ -53,6 +53,7 @@ cmd_t *parse_args(int argc, char *argv[])
     c->minlen = 0.5;
     c->only_sites = 0;
     c->reg_count = 0;
+    c->adjlist = 0;
 
     /* Get mode argument */
     if (argv[1])
@@ -153,6 +154,7 @@ int parse_coancestry(int argc, char *argv[], cmd_t *c)
         /* Declare the option table */
         static struct option long_options[] =
         {
+            { "adjlist", no_argument,       NULL, 'a' },
             { "minlen",  required_argument, NULL, 'm' },
             { "version", no_argument,       NULL, 'v' },
             { "help",    no_argument,       NULL, 'h' },
@@ -160,7 +162,7 @@ int parse_coancestry(int argc, char *argv[], cmd_t *c)
         };
 
         /* Parse the option */
-        g = getopt_long(argc, argv, "vhm:", long_options, &option_index);
+        g = getopt_long(argc, argv, "vham:", long_options, &option_index);
 
         /* We are at the end of the options */
         if (g == -1)
@@ -171,6 +173,9 @@ int parse_coancestry(int argc, char *argv[], cmd_t *c)
         /* Assign the option to variables */
         switch(g)
         {
+            case 'a':
+                c->adjlist = 1;
+                break;
             case 'm':
                 c->minlen = atof(optarg);
                 break;
@@ -540,6 +545,7 @@ int print_coancestry_usage(const char *msg)
         printf("%s\n\n", msg);
     }
     puts("Options:");
+    puts("  -adjlist           Output graph-based adjacency list [ Default: False ]");
     puts("  --minlen   FLOAT   Minimum match size (cM) [ Default: 0.5 cM ]");
     puts("  --version          Print version number and exit");
     puts("  --help             Display this help message and exit");
