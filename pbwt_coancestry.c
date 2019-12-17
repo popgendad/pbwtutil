@@ -25,13 +25,13 @@ int pbwt_coancestry(cmd_t *c)
     /* Construct adjacency list */
     if (c->adjlist)
     {
-        adjlist *g = NULL;
+        adjlist_t *g = NULL;
         g = create_adjlist(b->nsam, b->sid, b->reg);
         v = pbwt_set_match(b, c->minlen);
         match_adjsearch(b, b->match, g, 0, b->nsite);
         if (c->out_diploid)
         {
-            adjlist *h = diploidize(g);
+            adjlist_t *h = diploidize(g);
             print_adjlist(h);
         }
         else
