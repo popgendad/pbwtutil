@@ -54,6 +54,7 @@ cmd_t *parse_args(int argc, char *argv[])
     c->only_sites = 0;
     c->reg_count = 0;
     c->adjlist = 0;
+    c->out_diploid = 0;
 
     /* Get mode argument */
     if (argv[1])
@@ -154,6 +155,7 @@ int parse_coancestry(int argc, char *argv[], cmd_t *c)
         /* Declare the option table */
         static struct option long_options[] =
         {
+            { "diploid", no_argument,       NULL, 'd' },
             { "adjlist", no_argument,       NULL, 'a' },
             { "minlen",  required_argument, NULL, 'm' },
             { "version", no_argument,       NULL, 'v' },
@@ -173,6 +175,9 @@ int parse_coancestry(int argc, char *argv[], cmd_t *c)
         /* Assign the option to variables */
         switch(g)
         {
+            case 'd':
+                c->out_diploid = 1;
+                break;
             case 'a':
                 c->adjlist = 1;
                 break;
@@ -528,7 +533,7 @@ int print_main_usage(const char *msg)
     puts("Commands:");
     puts("  coancesty           Construct coancestry matrix between individuals");
     puts("  convert             Convert PLINK or VCF to PBWT or vice versa");
-    puts("  match               Run region matching algorithm");    
+    puts("  match               Run region matching algorithm");
     puts("  summary             Produce summary of PBWT file");
     puts("  view                Dump .pbwt file to stdout");
     putchar('\n');
@@ -545,7 +550,8 @@ int print_coancestry_usage(const char *msg)
         printf("%s\n\n", msg);
     }
     puts("Options:");
-    puts("  -adjlist           Output graph-based adjacency list [ Default: False ]");
+    puts("  --adjlist          Output graph-based adjacency list [ Default: False ]");
+    puts("  --diploid          Output diploid rather than haploid-based measures");
     puts("  --minlen   FLOAT   Minimum match size (cM) [ Default: 0.5 cM ]");
     puts("  --version          Print version number and exit");
     puts("  --help             Display this help message and exit");

@@ -23,6 +23,7 @@ typedef struct cmdl
     int only_sites;
     int reg_count;
     int adjlist;
+    int out_diploid;
     double minlen;
     char *popmap;
     char *outfile;
