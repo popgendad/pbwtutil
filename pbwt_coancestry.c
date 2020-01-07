@@ -27,7 +27,7 @@ int pbwt_coancestry(cmd_t *c)
     {
         adjlist_t *g = NULL;
         g = create_adjlist(b->nsam, b->sid, b->reg);
-        v = pbwt_set_match(b, c->minlen);
+        v = pbwt_all_match(b, c->minlen);
         match_adjsearch(b, b->match, g, 0, b->nsite);
         if (c->out_diploid)
         {

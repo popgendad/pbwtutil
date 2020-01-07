@@ -51,8 +51,8 @@ int pbwt_match(cmd_t *c)
         return -1;
     }
 
-    /* Find all set-maximal matches */
-    v = pbwt_query_match(b, c->minlen);
+    /* Find all matches */
+    v = pbwt_all_query_match(b, c->minlen);
     if (v < 0)
     {
         fputs("pbwtmaster [ERROR]: error retrieving matches", stderr);
