@@ -27,7 +27,14 @@ int pbwt_coancestry(cmd_t *c)
     {
         adjlist_t *g = NULL;
         g = create_adjlist(b->nsam, b->sid, b->reg);
-        v = pbwt_all_match(b, c->minlen);
+        if (c->set_match)
+        {
+            v = pbwt_set_match(b, c->minlen);
+        }
+        else
+        {
+            v = pbwt_all_match(b, c->minlen);
+        }
         match_adjsearch(b, b->match, g, 0, b->nsite);
         if (c->out_diploid)
         {
@@ -63,8 +70,15 @@ int pbwt_coancestry(cmd_t *c)
                 memset(cmatrix[i], 0, new_nsam * sizeof(double));
             }
 
-            /* Find all matches */
-            v = pbwt_all_match(b, c->minlen);
+            /* Find matches */
+            if (c->set_match)
+            {
+                v = pbwt_set_match(b, c->minlen);
+            }
+            else
+            {
+                v = pbwt_all_match(b, c->minlen);
+            }
             if (v < 0)
             {
                 fputs("pbwtmaster [ERROR]: error retrieving matches", stderr);
@@ -111,7 +125,14 @@ int pbwt_coancestry(cmd_t *c)
             }
 
             /* Find matches */
-            v = pbwt_all_match(b, c->minlen);
+            if (c->set_match)
+            {
+                v = pbwt_set_match(b, c->minlen);
+            }
+            else
+            {
+                v = pbwt_all_match(b, c->minlen);
+            }
             if (v < 0)
             {
                 fputs("pbwtmaster [ERROR]: error retrieving matches", stderr);

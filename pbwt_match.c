@@ -51,8 +51,15 @@ int pbwt_match(cmd_t *c)
         return -1;
     }
 
-    /* Find all matches */
-    v = pbwt_all_query_match(b, c->minlen);
+    /* Find matches */
+    if (c->set_match)
+    {
+        v = pbwt_set_query_match(b, c->minlen);
+    }
+    else
+    {
+        v = pbwt_all_query_match(b, c->minlen);
+    }
     if (v < 0)
     {
         fputs("pbwtmaster [ERROR]: error retrieving matches", stderr);
