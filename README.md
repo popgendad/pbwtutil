@@ -19,7 +19,10 @@ Produce coancestry matrix for all samples in PBWT
 
 
 Options:
+  --adjlist          Output graph-based adjacency list [ Default: False ]
+  --diploid          Output diploid rather than haploid-based measures
   --minlen   FLOAT   Minimum match size (cM) [ Default: 0.5 cM ]
+  --set              Find only set-maximal matches [ Default: all matches ]
   --version          Print version number and exit
   --help             Display this help message and exit
 ```
@@ -47,13 +50,14 @@ Options:
 ```
 Usage: pbwtmaster match [OPTION]... [PBWT FILE]
 
-Retrieve set-maximal matches in PBWT using query
+Retrieve all matches in PBWT using query
 
 
 Options:
   --minlen   FLOAT   Minimum match size (cM) [ Default: 0.5 cM ]
   --query    STR     String identifier of haplotypes to mark as query
   --all              Print a list of all matches with query
+  --set              Find only set-maximal matches [ Default: all matches ]
   --version          Print version number and exit
   --help             Display this help message and exit
 ```
@@ -85,4 +89,3 @@ Options:
   --version           Print version number and exit
   --help              Display this help message and exit
   ```
-  

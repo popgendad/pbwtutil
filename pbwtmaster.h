@@ -24,6 +24,7 @@ typedef struct cmdl
     int reg_count;
     int adjlist;
     int out_diploid;
+    int set_match;
     double minlen;
     char *popmap;
     char *outfile;

@@ -54,6 +54,7 @@ cmd_t *parse_args(int argc, char *argv[])
     c->only_sites = 0;
     c->reg_count = 0;
     c->adjlist = 0;
+    c->set_match = 0;
     c->out_diploid = 0;
 
     /* Get mode argument */
@@ -157,6 +158,7 @@ int parse_coancestry(int argc, char *argv[], cmd_t *c)
         {
             { "diploid", no_argument,       NULL, 'd' },
             { "adjlist", no_argument,       NULL, 'a' },
+            { "set",     no_argument,       NULL, 's' },
             { "minlen",  required_argument, NULL, 'm' },
             { "version", no_argument,       NULL, 'v' },
             { "help",    no_argument,       NULL, 'h' },
@@ -164,7 +166,7 @@ int parse_coancestry(int argc, char *argv[], cmd_t *c)
         };
 
         /* Parse the option */
-        g = getopt_long(argc, argv, "vham:", long_options, &option_index);
+        g = getopt_long(argc, argv, "vhasm:", long_options, &option_index);
 
         /* We are at the end of the options */
         if (g == -1)
@@ -183,6 +185,9 @@ int parse_coancestry(int argc, char *argv[], cmd_t *c)
                 break;
             case 'm':
                 c->minlen = atof(optarg);
+                break;
+            case 's':
+                c->set_match = 1;
                 break;
             case 'v':
                 printf("pbwtmaster: %s\n", Version);
@@ -384,6 +389,7 @@ int parse_match(int argc, char *argv[], cmd_t *c)
         {
             { "query",   required_argument, NULL, 'q' },
             { "minlen",  required_argument, NULL, 'm' },
+            { "set",     no_argument,       NULL, 's' },
             { "all",     no_argument,       NULL, 'a' },
             { "version", no_argument,       NULL, 'v' },
             { "help",    no_argument,       NULL, 'h' },
@@ -410,6 +416,9 @@ int parse_match(int argc, char *argv[], cmd_t *c)
                 break;
             case 'a':
                 c->match_all = 1;
+                break;
+            case 's':
+                c->set_match = 1;
                 break;
             case 'v':
                 printf("pbwtmaster: %s\n", Version);
@@ -552,6 +561,7 @@ int print_coancestry_usage(const char *msg)
     puts("Options:");
     puts("  --adjlist          Output graph-based adjacency list [ Default: False ]");
     puts("  --diploid          Output diploid rather than haploid-based measures");
+    puts("  --set              Find only set-maximal matches [ Default: all matches ]");
     puts("  --minlen   FLOAT   Minimum match size (cM) [ Default: 0.5 cM ]");
     puts("  --version          Print version number and exit");
     puts("  --help             Display this help message and exit");
@@ -584,7 +594,7 @@ int print_convert_usage(const char *msg)
 int print_match_usage(const char *msg)
 {
     puts("Usage: pbwtmaster match [OPTION]... [PBWT FILE]\n");
-    puts("Retrieve set-maximal matches in PBWT using query\n");
+    puts("Retrieve all matches in PBWT using query\n");
     putchar('\n');
     if (msg)
     {
@@ -594,6 +604,7 @@ int print_match_usage(const char *msg)
     puts("  --minlen   FLOAT   Minimum match size (cM) [ Default: 0.5 cM ]");
     puts("  --query    STR     String identifier of haplotypes to mark as query");
     puts("  --all              Print a list of all matches with query");
+    puts("  --set              Find only set-maximal matches [ Default: all matches ]");
     puts("  --version          Print version number and exit");
     puts("  --help             Display this help message and exit");
     putchar('\n');
