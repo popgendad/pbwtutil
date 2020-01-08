@@ -594,7 +594,7 @@ int print_convert_usage(const char *msg)
 int print_match_usage(const char *msg)
 {
     puts("Usage: pbwtmaster match [OPTION]... [PBWT FILE]\n");
-    puts("Retrieve all matches in PBWT using query\n");
+    puts("Retrieve match sets in PBWT using query\n");
     putchar('\n');
     if (msg)
     {
@@ -603,7 +603,7 @@ int print_match_usage(const char *msg)
     puts("Options:");
     puts("  --minlen   FLOAT   Minimum match size (cM) [ Default: 0.5 cM ]");
     puts("  --query    STR     String identifier of haplotypes to mark as query");
-    puts("  --all              Print a list of all matches with query");
+    puts("  --all              Print a list of all individual matches with query");
     puts("  --set              Find only set-maximal matches [ Default: all matches ]");
     puts("  --version          Print version number and exit");
     puts("  --help             Display this help message and exit");
@@ -614,7 +614,7 @@ int print_match_usage(const char *msg)
 int print_summary_usage(const char *msg)
 {
     puts("Usage: pbwtmaster summary [OPTION]... [INPUT STUB]\n");
-    puts("Print summary describing pbwt file\n");
+    puts("Print summary describing .pbwt file\n");
     putchar('\n');
     if (msg)
     {
