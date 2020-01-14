@@ -11,6 +11,11 @@ int pbwt_summary(cmd_t *c)
     khint_t it = 0;
     pbwt_t *b = NULL;
 
+    if (c == NULL)
+    {
+        return -1;
+    }
+
     /* Read PBWT file into memory */
     b = pbwt_read(c->instub);
     if (b == NULL)

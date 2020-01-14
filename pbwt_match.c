@@ -14,6 +14,11 @@ int pbwt_match(cmd_t *c)
     char **reglist = NULL;
     pbwt_t *b = NULL;
 
+    if (c == NULL)
+    {
+        return -1;
+    }
+
     /* Initialize hash for results */
     result = kh_init(floats);
 
@@ -26,7 +31,12 @@ int pbwt_match(cmd_t *c)
     }
 
     /* Uncompress the haplotype data */
-    pbwt_uncompress(b);
+    v = pbwt_uncompress(b);
+    if (v < 0)
+    {
+        fputs("pbwtmaster [ERROR]: error uncompressing haplotype data", stderr);
+        return -1;
+    }
 
     /* Make dictionary of sample identifiers and their indices */
     sdict = pbwt_get_sampdict(b);

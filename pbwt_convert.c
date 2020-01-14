@@ -11,6 +11,11 @@ int pbwt_convert_plink(cmd_t *c)
     char *outfile = NULL;
     pbwt_t *b = NULL;
 
+    if (c == NULL)
+    {
+        return -1;
+    }
+
     /* Construct outfile name */
     length = strlen(c->instub);
     outfile = (char *)malloc((length + 4) * sizeof(char));
@@ -29,9 +34,6 @@ int pbwt_convert_plink(cmd_t *c)
         fputs("pbwtmaster [ERROR]: problem importing PLINK stub\n", stderr);
         return -1;
     }
-
-    /* Build the prefix and divergence arrays */
-    v = pbwt_build(b);
 
     /* Write the pbwt to file */
     v = pbwt_write(outfile, b);
@@ -55,6 +57,11 @@ int pbwt_convert_vcf(cmd_t *c)
     int v = 0;
     pbwt_t *b = NULL;
 
+    if (c == NULL)
+    {
+        return -1;
+    }
+
     /* Import PBWT structure */
     b = pbwt_import_vcf(c->instub, c->popmap);
     if (b == NULL)
@@ -62,9 +69,6 @@ int pbwt_convert_vcf(cmd_t *c)
         fputs("pbwtmaster [ERROR]: problem importing VCF data\n", stderr);
         return -1;
     }
-
-    /* Build the prefix and divergence arrays */
-    v = pbwt_build(b);
 
     /* Write the pbwt to file */
     v = pbwt_write(c->outfile, b);

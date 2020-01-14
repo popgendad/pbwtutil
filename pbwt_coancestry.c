@@ -11,6 +11,11 @@ int pbwt_coancestry(cmd_t *c)
     double **cmatrix = NULL;
     pbwt_t *b = NULL;
 
+    if (c == NULL)
+    {
+        return -1;
+    }
+
     /* Read in the pbwt file from disk */
     b = pbwt_read(c->instub);
     if (b == NULL)
@@ -20,7 +25,12 @@ int pbwt_coancestry(cmd_t *c)
     }
 
     /* Uncompress the haplotype data */
-    pbwt_uncompress(b);
+    v = pbwt_uncompress(b);
+    if (v < 0)
+    {
+        fputs("pbwtmaster [ERROR]: error uncompressing haplotype data", stderr);
+        return -1;
+    }
 
     /* Construct adjacency list */
     if (c->adjlist)

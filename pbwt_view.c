@@ -2,13 +2,19 @@
 #include <stdlib.h>
 #include "pbwtmaster.h"
 
-int pbwt_print(const pbwt_t *, const int);
+int pbwt_print(const pbwt_t *, const size_t *, const int);
 int print_sites(const pbwt_t *);
 
 int pbwt_view(cmd_t *c)
 {
     int v = 0;
+    size_t *ppa = NULL;
     pbwt_t *b = NULL;
+
+    if (c == NULL)
+    {
+        return -1;
+    }
 
     /* Read PBWT file data into memory */
     b = pbwt_read(c->instub);
@@ -26,7 +32,7 @@ int pbwt_view(cmd_t *c)
         return -1;
     }
 
-    v = pbwt_build(b);
+    ppa = pbwt_build(b);
 
     /* Print the PBWT data structure */
     if (c->only_sites)
@@ -39,7 +45,7 @@ int pbwt_view(cmd_t *c)
     }
     else
     {
-        v = pbwt_print(b, c->nohaps);
+        v = pbwt_print(b, ppa, c->nohaps);
         if (v < 0)
         {
             return -1;
@@ -48,12 +54,13 @@ int pbwt_view(cmd_t *c)
 
     /* Clean up allocated memory */
     pbwt_destroy(b);
+    free(ppa);
     free(c);
 
     return 0;
 }
 
-int pbwt_print(const pbwt_t *b, const int nohaps)
+int pbwt_print(const pbwt_t *b, const size_t *ppa, const int nohaps)
 {
     /* Check if pointer is NULL */
     if (b == NULL)
@@ -66,12 +73,12 @@ int pbwt_print(const pbwt_t *b, const int nohaps)
 
     for (i = 0; i < b->nsam; ++i)
     {
-        size_t index = b->ppa[i];
+        size_t index = ppa[i];
 
         /* Print sample identifier associated with haplotype i */
         if (b->sid[index])
         {
-            printf("%s", b->sid[index]);
+            printf("%20.20s", b->sid[index]);
         }
         else
         {
@@ -82,7 +89,7 @@ int pbwt_print(const pbwt_t *b, const int nohaps)
         /* If a region is present */
         if (b->reg[index])
         {
-            printf("\t%s", b->reg[index]);
+            printf("\t%20.20s", b->reg[index]);
         }
         putchar('\t');
 
@@ -95,8 +102,8 @@ int pbwt_print(const pbwt_t *b, const int nohaps)
             }
         }
 
-        /* Print prefix and divergence array member for haplotype i */
-        printf("%5zu\t%5zu\n", b->div[i], index);
+        /* Print prefix array member for haplotype i */
+        printf("%zu\n", index);
     }
 
     return 0;
@@ -105,9 +112,11 @@ int pbwt_print(const pbwt_t *b, const int nohaps)
 int print_sites(const pbwt_t *b)
 {
     size_t i = 0;
+
     for (i = 0; i < b->nsite; ++i)
     {
         printf("%s\t%s\t%lf\n", b->chr[i], b->rsid[i], b->cm[i]);
     }
+
     return 0;
 }
