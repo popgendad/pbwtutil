@@ -8,7 +8,7 @@ int print_sites(const pbwt_t *);
 int pbwt_view(cmd_t *c)
 {
     int v = 0;
-    size_t *ppa = NULL;
+    /*size_t *ppa = NULL;*/
     pbwt_t *b = NULL;
 
     if (c == NULL)
@@ -32,7 +32,7 @@ int pbwt_view(cmd_t *c)
         return -1;
     }
 
-    ppa = pbwt_build(b);
+    /*ppa = pbwt_build(b); */
 
     /* Print the PBWT data structure */
     if (c->only_sites)
@@ -45,7 +45,7 @@ int pbwt_view(cmd_t *c)
     }
     else
     {
-        v = pbwt_print(b, ppa, c->nohaps);
+        v = pbwt_print(b, b->ppa, c->nohaps);
         if (v < 0)
         {
             return -1;
