@@ -51,4 +51,3 @@ extern int pbwt_summary(cmd_t *);
 extern int pbwt_view(cmd_t *);
 
 #endif
-
