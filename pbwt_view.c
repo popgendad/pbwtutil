@@ -54,7 +54,6 @@ int pbwt_view(cmd_t *c)
 
     /* Clean up allocated memory */
     pbwt_destroy(b);
-    free(ppa);
     free(c);
 
     return 0;
@@ -103,7 +102,7 @@ int pbwt_print(const pbwt_t *b, const size_t *ppa, const int nohaps)
         }
 
         /* Print prefix array member for haplotype i */
-        printf("%zu\n", index);
+        printf("\t%zu\n", index);
     }
 
     return 0;
