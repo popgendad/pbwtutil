@@ -27,6 +27,7 @@ int print_convert_usage(const char *);
 int print_match_usage(const char *);
 int print_summary_usage(const char *);
 int print_view_usage(const char *);
+void print_version(void);
 
 cmd_t *parse_args(int argc, char *argv[])
 {
@@ -190,10 +191,7 @@ int parse_coancestry(int argc, char *argv[], cmd_t *c)
                 c->set_match = 1;
                 break;
             case 'v':
-                printf("pbwtmaster: %s\n", Version);
-                printf("libpbwt: %s\n", pbwt_version());
-                printf("libplink_lite: %s\n", plink_version());
-                printf("htslib: %s\n", hts_version());
+                print_version();
                 return -1;
             case 'h':
                 print_coancestry_usage(NULL);
@@ -272,10 +270,7 @@ int parse_convert(int argc, char *argv[], cmd_t *c)
                 c->is_phased = 1;
                 break;
             case 'v':
-                printf("pbwtmaster: %s\n", Version);
-                printf("libpbwt: %s\n", pbwt_version());
-                printf("libplink_lite: %s\n", plink_version());
-                printf("htslib: %s\n", hts_version());
+                print_version();
                 return -1;
             case 'h':
                 print_convert_usage(NULL);
@@ -343,10 +338,7 @@ int parse_summary(int argc, char *argv[], cmd_t *c)
                 c->reg_count = 1;
                 break;
             case 'v':
-                printf("pbwtmaster: %s\n", Version);
-                printf("libpbwt: %s\n", pbwt_version());
-                printf("libplink_lite: %s\n", plink_version());
-                printf("htslib: %s\n", hts_version());
+                print_version();
                 return -1;
             case 'h':
                 print_summary_usage(NULL);
@@ -421,10 +413,7 @@ int parse_match(int argc, char *argv[], cmd_t *c)
                 c->set_match = 1;
                 break;
             case 'v':
-                printf("pbwtmaster: %s\n", Version);
-                printf("libpbwt: %s\n", pbwt_version());
-                printf("libplink_lite: %s\n", plink_version());
-                printf("htslib: %s\n", hts_version());
+                print_version();
                 return -1;
             case 'h':
                 print_match_usage(NULL);
@@ -498,10 +487,7 @@ int parse_view(int argc, char *argv[], cmd_t *c)
                 c->only_sites = 1;
                 break;
             case 'v':
-                printf("pbwtmaster: %s\n", Version);
-                printf("libpbwt: %s\n", pbwt_version());
-                printf("libplink_lite: %s\n", plink_version());
-                printf("htslib: %s\n", hts_version());
+                print_version();
                 return -1;
             case 'h':
                 print_view_usage(NULL);
@@ -646,3 +632,10 @@ int print_view_usage(const char *msg)
     return 0;
 }
 
+void print_version(void)
+{
+    printf("pbwtmaster: %s\n", Version);
+    printf("libpbwt: %s\n", pbwt_version());
+    printf("libplink_lite: %s\n", plink_version());
+    printf("htslib: %s\n", hts_version());
+}
