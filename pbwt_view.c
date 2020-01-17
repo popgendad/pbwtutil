@@ -77,7 +77,14 @@ int pbwt_print(const pbwt_t *b, const size_t *ppa, const int nohaps)
         /* Print sample identifier associated with haplotype i */
         if (b->sid[index])
         {
-            printf("%20.20s", b->sid[index]);
+            if (nohaps)
+            {
+                printf("%.20s", b->sid[index]);
+            }
+            else
+            {
+                printf("%20.20s", b->sid[index]);
+            }
         }
         else
         {
@@ -88,7 +95,14 @@ int pbwt_print(const pbwt_t *b, const size_t *ppa, const int nohaps)
         /* If a region is present */
         if (b->reg[index])
         {
-            printf("\t%20.20s", b->reg[index]);
+            if (nohaps)
+            {
+                printf("\t%.20s", b->reg[index]);
+            }
+            else
+            {
+                printf("\t%20.20s", b->reg[index]);
+            }
         }
         putchar('\t');
 
