@@ -3,7 +3,6 @@
 #include <string.h>
 #include "pbwtmaster.h"
 
-
 int pbwt_convert_plink(const cmd_t *c)
 {
     int v = 0;

@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "pbwtmaster.h"
 
-
 int pbwt_summary(const cmd_t *c)
 {
     int v = 0;
@@ -48,8 +47,7 @@ int pbwt_summary(const cmd_t *c)
     /* If user specifies regcount option */
     if (c->reg_count)
     {
-        putchar('\n');
-        printf("Region\tCount\n");
+        printf("\nRegion\tCount\n");
         for (it = kh_begin(regcount); it != kh_end(regcount); ++it)
         {
             if (kh_exist(regcount, it))

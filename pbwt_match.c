@@ -91,11 +91,13 @@ int pbwt_match(const cmd_t *c)
             k = kh_get(floats, b->reghash, reglist[i]);
             if (kh_exist(b->reghash, k) && k != kh_end(b->reghash))
             {
-                fprintf(stdout, "%s\t%s\t%s\t%s\t%1.5lf\n", c->instub, b->sid[qid], b->reg[qid], reglist[i], kh_value(b->reghash, k));
+                fprintf(stdout, "%s\t%s\t%s\t%s\t%1.5lf\n",
+                        c->instub, b->sid[qid], b->reg[qid], reglist[i], kh_value(b->reghash, k));
             }
             else
             {
-                fprintf(stdout, "%s\t%s\t%s\t%s\t0.00000\n", c->instub, b->sid[qid], b->reg[qid], reglist[i]);
+                fprintf(stdout, "%s\t%s\t%s\t%s\t0.00000\n",
+                        c->instub, b->sid[qid], b->reg[qid], reglist[i]);
             }
         }
         free(reglist);
