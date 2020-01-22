@@ -8,7 +8,6 @@ int print_sites(const pbwt_t *);
 int pbwt_view(const cmd_t *c)
 {
     int v = 0;
-    /*size_t *ppa = NULL;*/
     pbwt_t *b = NULL;
 
     if (c == NULL)

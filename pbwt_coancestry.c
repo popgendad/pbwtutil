@@ -42,7 +42,8 @@ int pbwt_coancestry(const cmd_t *c)
         {
             v = pbwt_all_match(b, c->minlen, report_adjlist);
         }
-/*        if (c->out_diploid)
+        /* TODO: Implement adjlist diploid
+        if (c->out_diploid)
         {
             adjlist_t *h = diploidize(g);
             print_adjlist(h);
@@ -54,79 +55,34 @@ int pbwt_coancestry(const cmd_t *c)
     }
     else
     {
-        if (c->out_diploid)
+        /* Find matches */
+        if (c->set_match)
         {
-/*            size_t new_nsam = b->nsam / 2;
-
-
-            cmatrix = (double **)malloc(new_nsam * sizeof(double *));
-            if (cmatrix == NULL)
-            {
-                fputs("pbwtmaster [ERROR]: memory allocation error", stderr);
-                return -1;
-            }
-            for (i = 0; i < new_nsam; ++i)
-            {
-                cmatrix[i] = (double *)malloc(new_nsam * sizeof(double));
-                if (cmatrix[i] == NULL)
-                {
-                    fputs("pbwtmaster [ERROR]: memory allocation error", stderr);
-                    return -1;
-                }
-                memset(cmatrix[i], 0, new_nsam * sizeof(double));
-            }
-
-
-            if (c->set_match)
-            {
-                v = pbwt_set_match(b, c->minlen);
-            }
-            else
-            {
-                v = pbwt_all_match(b, c->minlen, report_match);
-            }
-            if (v < 0)
-            {
-                fputs("pbwtmaster [ERROR]: error retrieving matches", stderr);
-                return -1;
-            }
-
-
-            match_coasearch(b, b->match, cmatrix, 0, b->nsite, c->out_diploid);
-
-
-            for (i = 0; i < new_nsam; ++i)
-            {
-                for (j = 0; j < new_nsam - 1; ++j)
-                {
-                    printf("%1.4lf\t", cmatrix[i][j]);
-                }
-                printf("%1.4lf\n", cmatrix[i][j]);
-            }
-
-            for (i = 0; i < new_nsam; ++i)
-            {
-                free(cmatrix[i]);
-            }
-            free(cmatrix);*/
+            v = pbwt_set_match(b, c->minlen, add_coancestry);
         }
         else
         {
-            /* Find matches */
-            if (c->set_match)
-            {
-                v = pbwt_set_match(b, c->minlen, add_coancestry);
-            }
-            else
-            {
-                v = pbwt_all_match(b, c->minlen, add_coancestry);
-            }
-            if (v < 0)
-            {
-                fputs("pbwtmaster [ERROR]: error retrieving matches", stderr);
-                return -1;
-            }
+            v = pbwt_all_match(b, c->minlen, add_coancestry);
+        }
+        if (v < 0)
+        {
+            fputs("pbwtmaster [ERROR]: error retrieving matches", stderr);
+            return -1;
+        }
 
+        if (c->out_diploid)
+        {
+            for (i = 0; i < b->nsam/2; ++i)
+            {
+                for (j = 0; j < b->nsam/2 - 1; ++j)
+                {
+                    printf("%1.4lf\t", b->cmatrix[2*i][2*j+1] + b->cmatrix[2*i+1][2*j]);
+                }
+                printf("%1.4lf\n", b->cmatrix[2*i][2*j] + b->cmatrix[2*i+1][2*j+1]);
+            }
+        }
+        else
+        {
             /* Print coancestry matrix to STDOUT */
             for (i = 0; i < b->nsam; ++i)
             {
