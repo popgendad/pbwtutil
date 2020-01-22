@@ -38,7 +38,7 @@ int pbwt_summary(const cmd_t *c)
     regcount = pbwt_get_regcount(b);
 
     /* Print summary report */
-    printf("Number of samples:\t%zu\n", b->nsam);
+    printf("Number of haplotypes:\t%zu\n", b->nsam);
     printf("Number of sites:\t%zu\n", b->nsite);
     printf("Total recombination distance:\t%1.5lf\n", b->cm[b->nsite-1] - b->cm[0]);
     printf("Number of regions:\t%d\n", kh_size(regcount));
