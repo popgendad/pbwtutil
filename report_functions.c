@@ -19,14 +19,17 @@ void add_coancestry(pbwt_t *b, const size_t first, const size_t second, const si
 	if (b->cmatrix == NULL)
 	{
 		b->cmatrix = (double **)malloc(b->nsam * sizeof(double*));
+		if (b->cmatrix == NULL)
+		{
+			return;
+		}
 		size_t i;
 		for (i = 0; i < b->nsam; i++)
 		{
-			b->cmatrix[i] = (double *)malloc(b->nsam * sizeof(double));
-			size_t j;
-			for (j = 0; j < b-> nsam; ++j)
+			b->cmatrix[i] = (double *)calloc(b->nsam, sizeof(double));
+			if (b->cmatrix[i] == NULL)
 			{
-				b->cmatrix[i][j] = 0.0;
+				return;
 			}
 		}
 	}
