@@ -2,14 +2,13 @@
 #include <stdlib.h>
 #include "pbwtmaster.h"
 
-int pbwt_match(cmd_t *c)
+int pbwt_match(const cmd_t *c)
 {
     int v = 0;
     size_t i = 0;
     size_t nregs = 0;
     size_t qid = 0;
     khint_t k = 0;
-    khash_t(floats) *result = NULL;
     khash_t(integer) *sdict = NULL;
     char **reglist = NULL;
     pbwt_t *b = NULL;
@@ -18,9 +17,6 @@ int pbwt_match(cmd_t *c)
     {
         return -1;
     }
-
-    /* Initialize hash for results */
-    result = kh_init(floats);
 
     /* Read in the pbwt file from disk */
     b = pbwt_read(c->instub);
@@ -62,28 +58,25 @@ int pbwt_match(cmd_t *c)
     }
 
     /* Find matches */
-    if (c->set_match)
+    if (c->set_match && c->match_all)
     {
-        v = pbwt_set_query_match(b, c->minlen);
+        v = pbwt_set_query_match(b, c->minlen, report_adjlist);
+    }
+    else if (c->set_match && !c->match_all)
+    {
+        v = pbwt_set_query_match(b, c->minlen, add_region);
+    }
+    else if (!c->set_match && c->match_all)
+    {
+        v = pbwt_all_query_match(b, c->minlen, report_adjlist);
     }
     else
     {
-        v = pbwt_all_query_match(b, c->minlen);
-    }
-    if (v < 0)
-    {
-        fputs("pbwtmaster [ERROR]: error retrieving matches", stderr);
-        return -1;
+        v = pbwt_all_query_match(b, c->minlen, add_region);
     }
 
-    if (c->match_all)
+    if (!c->match_all)
     {
-        match_print(b, b->match);
-    }
-    else
-    {
-        match_regsearch(b, b->match, result, 0, b->nsite);
-
         /* Get hash of regions */
         reglist = pbwt_get_reglist(b, &nregs);
         if (reglist == NULL)
@@ -95,10 +88,10 @@ int pbwt_match(cmd_t *c)
         /* Print region list to STDOUT */
         for (i = 0; i < nregs; ++i)
         {
-            k = kh_get(floats, result, reglist[i]);
-            if (kh_exist(result, k) && k != kh_end(result))
+            k = kh_get(floats, b->reghash, reglist[i]);
+            if (kh_exist(b->reghash, k) && k != kh_end(b->reghash))
             {
-                fprintf(stdout, "%s\t%s\t%s\t%s\t%1.5lf\n", c->instub, b->sid[qid], b->reg[qid], reglist[i], kh_value(result, k));
+                fprintf(stdout, "%s\t%s\t%s\t%s\t%1.5lf\n", c->instub, b->sid[qid], b->reg[qid], reglist[i], kh_value(b->reghash, k));
             }
             else
             {
@@ -110,10 +103,7 @@ int pbwt_match(cmd_t *c)
 
     /* Clean up allocated memory */
     pbwt_destroy(b);
-    kh_destroy(floats, result);
     kh_destroy(integer, sdict);
-    free(c->query);
-    free(c);
 
     return 0;
 }

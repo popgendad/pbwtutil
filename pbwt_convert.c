@@ -4,7 +4,7 @@
 #include "pbwtmaster.h"
 
 
-int pbwt_convert_plink(cmd_t *c)
+int pbwt_convert_plink(const cmd_t *c)
 {
     int v = 0;
     size_t length = 0;
@@ -46,13 +46,11 @@ int pbwt_convert_plink(cmd_t *c)
     /* Free memory for the data structure */
     pbwt_destroy(b);
     free(outfile);
-    free(c->query);
-    free(c);
 
     return 0;
 }
 
-int pbwt_convert_vcf(cmd_t *c)
+int pbwt_convert_vcf(const cmd_t *c)
 {
     int v = 0;
     pbwt_t *b = NULL;
@@ -80,8 +78,6 @@ int pbwt_convert_vcf(cmd_t *c)
 
     /* Clean up allocated memory */
     pbwt_destroy(b);
-    free(c->query);
-    free(c);
 
     return 0;
 }

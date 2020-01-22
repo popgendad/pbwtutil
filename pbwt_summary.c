@@ -3,7 +3,7 @@
 #include "pbwtmaster.h"
 
 
-int pbwt_summary(cmd_t *c)
+int pbwt_summary(const cmd_t *c)
 {
     int v = 0;
     size_t orig_size = 0;
@@ -61,8 +61,6 @@ int pbwt_summary(cmd_t *c)
 
     /* Clean up allocated memory */
     pbwt_destroy(b);
-    free(c->query);
-    free(c);
 
     return v;
 }

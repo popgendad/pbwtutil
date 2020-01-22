@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "pbwtmaster.h"
+
+void report_adjlist(pbwt_t *b, const size_t first, const size_t second, const size_t begin, const size_t end)
+{
+    printf("%s\t%s\t%1.4lf\t%s\t%s\n", b->sid[first], b->sid[second],
+           b->cm[end] - b->cm[begin], b->reg[first], b->reg[second]);
+}
+
+void insert_interval(pbwt_t *b, const size_t first, const size_t second, const size_t begin, const size_t end)
+{
+    match_insert(b->intree, first, second, begin, end);
+}
+
+void add_coancestry(pbwt_t *b, const size_t first, const size_t second, const size_t begin, const size_t end)
+{
+	if (b->cmatrix == NULL)
+	{
+		b->cmatrix = (double **)malloc(b->nsam * sizeof(double*));
+		size_t i;
+		for (i = 0; i < b->nsam; i++)
+		{
+			b->cmatrix[i] = (double *)malloc(b->nsam * sizeof(double));
+			size_t j;
+			for (j = 0; j < b-> nsam; ++j)
+			{
+				b->cmatrix[i][j] = 0.0;
+			}
+		}
+	}
+	double length = b->cm[end] - b->cm[begin];
+	b->cmatrix[first][second] += length;
+	b->cmatrix[second][first] = b->cmatrix[first][second];
+}
+
+void add_region(pbwt_t *b, const size_t first, const size_t second, const size_t begin, const size_t end)
+{
+	if (b->reghash == NULL)
+	{
+		b->reghash = kh_init(floats);
+	}
+	int a = 0;
+	size_t qs = 0;
+	khint_t k = 0;
+	double length = b->cm[end] - b->cm[begin];
+	qs = b->is_query[first] ? second : first;
+	k = kh_put(floats, b->reghash, b->reg[qs], &a);
+	if (a == 0)
+	{
+		double ent = kh_value(b->reghash, k);
+		ent += length;
+		kh_value(b->reghash, k) = ent;
+	}
+	else
+	{
+		kh_value(b->reghash, k) = length;
+	}
+}

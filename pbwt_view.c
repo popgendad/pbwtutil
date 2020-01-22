@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include "pbwtmaster.h"
 
-int pbwt_print(const pbwt_t *, const size_t *, const int);
+int pbwt_print(const pbwt_t *, const int);
 int print_sites(const pbwt_t *);
 
-int pbwt_view(cmd_t *c)
+int pbwt_view(const cmd_t *c)
 {
     int v = 0;
     /*size_t *ppa = NULL;*/
@@ -45,7 +45,7 @@ int pbwt_view(cmd_t *c)
     }
     else
     {
-        v = pbwt_print(b, b->ppa, c->nohaps);
+        v = pbwt_print(b, c->nohaps);
         if (v < 0)
         {
             return -1;
@@ -54,12 +54,11 @@ int pbwt_view(cmd_t *c)
 
     /* Clean up allocated memory */
     pbwt_destroy(b);
-    free(c);
 
     return 0;
 }
 
-int pbwt_print(const pbwt_t *b, const size_t *ppa, const int nohaps)
+int pbwt_print(const pbwt_t *b, const int nohaps)
 {
     /* Check if pointer is NULL */
     if (b == NULL)
@@ -72,51 +71,47 @@ int pbwt_print(const pbwt_t *b, const size_t *ppa, const int nohaps)
 
     for (i = 0; i < b->nsam; ++i)
     {
-        size_t index = ppa[i];
-
         /* Print sample identifier associated with haplotype i */
-        if (b->sid[index])
+        if (b->sid[i])
         {
             if (nohaps)
             {
-                printf("%.20s", b->sid[index]);
+                printf("%.20s", b->sid[i]);
             }
             else
             {
-                printf("%20.20s", b->sid[index]);
+                printf("%20.20s", b->sid[i]);
             }
         }
         else
         {
-            fprintf(stderr, "pbwtmaster [ERROR]: problem reading sample identifier with index %5zu\n", index);
+            fprintf(stderr, "pbwtmaster [ERROR]: problem reading sample identifier with index %5zu\n", i);
             return -1;
         }
 
         /* If a region is present */
-        if (b->reg[index])
+        if (b->reg[i])
         {
             if (nohaps)
             {
-                printf("\t%.20s", b->reg[index]);
+                printf("\t%.20s", b->reg[i]);
             }
             else
             {
-                printf("\t%20.20s", b->reg[index]);
+                printf("\t%20.20s", b->reg[i]);
             }
         }
-        putchar('\t');
 
         /* Print binary haplotype array for haplotype i */
         if (nohaps == 0)
         {
+            putchar('\t');
             for (j = 0; j < b->nsite; ++j)
             {
-                putchar((char)(b->data[TWODCORD(index, b->nsite, j)]));
+                putchar((char)(b->data[TWODCORD(i, b->nsite, j)]));
             }
         }
-
-        /* Print prefix array member for haplotype i */
-        printf("\t%zu\n", index);
+        putchar('\n');
     }
 
     return 0;

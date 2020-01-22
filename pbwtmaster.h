@@ -30,7 +30,7 @@ typedef struct cmdl
     char *outfile;
     char *query;
     char *instub;
-    int (*mode_func)(struct cmdl *);
+    int (*mode_func)(const struct cmdl *);
 } cmd_t;
 
 
@@ -38,16 +38,24 @@ typedef struct cmdl
 
 extern cmd_t *parse_args(int argc, char *argv[]);
 
-extern int pbwt_coancestry(cmd_t *);
+extern int pbwt_coancestry(const cmd_t *);
 
-extern int pbwt_convert_plink(cmd_t *);
+extern int pbwt_convert_plink(const cmd_t *);
 
-extern int pbwt_convert_vcf(cmd_t *);
+extern int pbwt_convert_vcf(const cmd_t *);
 
-extern int pbwt_match(cmd_t *);
+extern int pbwt_match(const cmd_t *);
 
-extern int pbwt_summary(cmd_t *);
+extern int pbwt_summary(const cmd_t *);
 
-extern int pbwt_view(cmd_t *);
+extern int pbwt_view(const cmd_t *);
+
+extern void insert_interval(pbwt_t *, const size_t, const size_t, const size_t, const size_t);
+
+extern  void report_adjlist(pbwt_t *, const size_t, const size_t, const size_t, const size_t);
+
+extern void add_coancestry(pbwt_t *, const size_t, const size_t, const size_t, const size_t);
+
+extern void add_region(pbwt_t *, const size_t, const size_t, const size_t, const size_t);
 
 #endif
