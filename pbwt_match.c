@@ -30,7 +30,7 @@ int pbwt_match(const cmd_t *c)
     v = pbwt_uncompress(b);
     if (v < 0)
     {
-        fputs("pbwtmaster [ERROR]: error uncompressing haplotype data", stderr);
+        fputs("pbwtmaster [ERROR]: error uncompressing haplotype data\n", stderr);
         return -1;
     }
 
@@ -38,7 +38,7 @@ int pbwt_match(const cmd_t *c)
     sdict = pbwt_get_sampdict(b);
     if (sdict == NULL)
     {
-        fputs("pbwtmaster [ERROR]: cannot construct sample identifier dictionary", stderr);
+        fputs("pbwtmaster [ERROR]: cannot construct sample identifier dictionary\n", stderr);
         return -1;
     }
 
@@ -81,7 +81,7 @@ int pbwt_match(const cmd_t *c)
         reglist = pbwt_get_reglist(b, &nregs);
         if (reglist == NULL)
         {
-            fputs("pbwtmaster [ERROR]: cannot retrieve reg list", stderr);
+            fputs("pbwtmaster [ERROR]: cannot retrieve reg list\n", stderr);
             return -1;
         }
 

@@ -41,7 +41,7 @@ cmd_t *parse_args(int argc, char *argv[])
     c = (cmd_t *)malloc(sizeof(cmd_t));
     if (c == NULL)
     {
-        fputs("pbwtmaster [ERROR]: memory allocation failure", stderr);
+        fputs("pbwtmaster [ERROR]: memory allocation failure\n", stderr);
         return NULL;
     }
 

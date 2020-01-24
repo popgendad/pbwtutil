@@ -27,7 +27,7 @@ int pbwt_view(const cmd_t *c)
     v = pbwt_uncompress(b);
     if (v < 0)
     {
-        fputs("pbwtmaster [ERROR]: error uncompressing haplotype data", stderr);
+        fputs("pbwtmaster [ERROR]: error uncompressing haplotype data\n", stderr);
         return -1;
     }
 
