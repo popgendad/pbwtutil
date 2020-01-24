@@ -9,7 +9,9 @@ int pbwt_match(const cmd_t *c)
     size_t nregs = 0;
     size_t qid = 0;
     khint_t k = 0;
+    khint_t kk = 0;
     khash_t(integer) *sdict = NULL;
+    khash_t(integer) *cdict = NULL;
     char **reglist = NULL;
     pbwt_t *b = NULL;
 
@@ -39,6 +41,13 @@ int pbwt_match(const cmd_t *c)
     if (sdict == NULL)
     {
         fputs("pbwtmaster [ERROR]: cannot construct sample identifier dictionary\n", stderr);
+        return -1;
+    }
+
+    cdict = pbwt_get_regcount(b);
+    if (cdict == NULL)
+    {
+         fputs("pbwtmaster [ERROR]: cannot construct region count dictionary\n", stderr);
         return -1;
     }
 
@@ -89,14 +98,17 @@ int pbwt_match(const cmd_t *c)
         for (i = 0; i < nregs; ++i)
         {
             k = kh_get(floats, b->reghash, reglist[i]);
+            kk = kh_get(integer, cdict, reglist[i]);
             if (kh_exist(b->reghash, k) && k != kh_end(b->reghash))
             {
-                fprintf(stdout, "%s\t%s\t%s\t%s\t%1.5lf\n",
-                        c->instub, b->sid[qid], b->reg[qid], reglist[i], kh_value(b->reghash, k));
+                size_t co = kh_value(cdict, kk);
+                double total = kh_value(b->reghash, k);
+                fprintf(stdout, "%s\t%s\t%s\t%s\t%1.5lf\t%1.5lf\n",
+                        c->instub, b->sid[qid], b->reg[qid], reglist[i], total, total / co);
             }
             else
             {
-                fprintf(stdout, "%s\t%s\t%s\t%s\t0.00000\n",
+                fprintf(stdout, "%s\t%s\t%s\t%s\t0.00000\t0.00000\n",
                         c->instub, b->sid[qid], b->reg[qid], reglist[i]);
             }
         }
@@ -106,6 +118,7 @@ int pbwt_match(const cmd_t *c)
     /* Clean up allocated memory */
     pbwt_destroy(b);
     kh_destroy(integer, sdict);
+    kh_destroy(integer, cdict);
 
     return 0;
 }
