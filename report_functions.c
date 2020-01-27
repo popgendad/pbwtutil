@@ -15,9 +15,9 @@ void report_adjlist_with_sites(pbwt_t *b, const size_t first, const size_t secon
            begin, end, b->cm[end] - b->cm[begin], b->reg[first], b->reg[second]);
 }
 
-void insert_interval(pbwt_t *b, const size_t first, const size_t second, const size_t begin, const size_t end)
+void add_interval(pbwt_t *b, const size_t first, const size_t second, const size_t begin, const size_t end)
 {
-    match_insert(b->intree, first, second, begin, end);
+    b->intree = match_insert(b->intree, first, second, begin, end);
 }
 
 void add_coancestry(pbwt_t *b, const size_t first, const size_t second, const size_t begin, const size_t end)

@@ -7,7 +7,7 @@
 
 /* Define mode mappings */
 
-enum Mode {COANCESTRY, CONVERT, MATCH, SUMMARY, VIEW};
+enum Mode {COANCESTRY, CONVERT, MATCH, PILEUP, SUMMARY, VIEW};
 
 
 /* Define data structures */
@@ -47,11 +47,13 @@ extern int pbwt_convert_vcf(const cmd_t *);
 
 extern int pbwt_match(const cmd_t *);
 
+extern int pbwt_pileup(const cmd_t *);
+
 extern int pbwt_summary(const cmd_t *);
 
 extern int pbwt_view(const cmd_t *);
 
-extern void insert_interval(pbwt_t *, const size_t, const size_t, const size_t, const size_t);
+extern void add_interval(pbwt_t *, const size_t, const size_t, const size_t, const size_t);
 
 extern  void report_adjlist(pbwt_t *, const size_t, const size_t, const size_t, const size_t);
 

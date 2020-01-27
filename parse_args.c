@@ -19,12 +19,14 @@ extern char *optarg;
 int parse_coancestry(int, char **, cmd_t *);
 int parse_convert(int, char **, cmd_t *);
 int parse_match(int, char **, cmd_t *);
+int parse_pileup(int, char **, cmd_t *);
 int parse_summary(int, char **, cmd_t *);
 int parse_view(int, char **, cmd_t *);
 int print_main_usage(const char *);
 int print_coancestry_usage(const char *);
 int print_convert_usage(const char *);
 int print_match_usage(const char *);
+int print_pileup_usage(const char *);
 int print_summary_usage(const char *);
 int print_view_usage(const char *);
 void print_version(void);
@@ -91,6 +93,12 @@ cmd_t *parse_args(int argc, char *argv[])
         c->mode = MATCH;
         c->mode_func = &pbwt_match;
         parse_func = &parse_match;
+    }
+    else if (strcmp(mode, "pileup") == 0)
+    {
+        c->mode = PILEUP;
+        c->mode_func = &pbwt_pileup;
+        parse_func = &parse_pileup;
     }
     else if (strcmp(mode, "summary") == 0)
     {
@@ -307,67 +315,6 @@ int parse_convert(int argc, char *argv[], cmd_t *c)
     return 0;
 }
 
-int parse_summary(int argc, char *argv[], cmd_t *c)
-{
-    int g = 0;
-    char msg[100];
-
-    while (1)
-    {
-        int option_index = 0;
-
-        /* Declare the option table */
-        static struct option long_options[] =
-        {
-            { "regcount", no_argument,      NULL, 'r' },
-            { "version", no_argument,       NULL, 'v' },
-            { "help",    no_argument,       NULL, 'h' },
-            {0, 0, 0, 0}
-        };
-
-        /* Parse the option */
-        g = getopt_long(argc, argv, "rvh", long_options, &option_index);
-
-        /* We are at the end of the options */
-        if (g == -1)
-            break;
-
-        /* Assign the option to variables */
-        switch(g)
-        {
-            case 'r':
-                c->reg_count = 1;
-                break;
-            case 'v':
-                print_version();
-                return -1;
-            case 'h':
-                print_summary_usage(NULL);
-                return -1;
-            case '?':
-                sprintf(msg, "pbwtmaster [ERROR]: unknown option \"-%c\".\n", optopt);
-                print_summary_usage(msg);
-                return -1;
-            default:
-                print_summary_usage(NULL);
-                return -1;
-        }
-    }
-
-    /* Parse non-optioned arguments */
-    if (optind != argc - 1)
-    {
-        print_summary_usage("pbwtmaster [ERROR]: need input stub as mandatory argument");
-        return -1;
-    }
-    else
-    {
-        c->instub = strdup(argv[optind]);
-    }
-
-    return 0;
-}
-
 int parse_match(int argc, char *argv[], cmd_t *c)
 {
     int g = 0;
@@ -391,7 +338,7 @@ int parse_match(int argc, char *argv[], cmd_t *c)
         };
 
         /* Parse the option */
-        g = getopt_long(argc, argv, "vhaq:m:", long_options, &option_index);
+        g = getopt_long(argc, argv, "vhapq:m:", long_options, &option_index);
 
         /* We are at the end of the options */
         if (g == -1)
@@ -449,6 +396,143 @@ int parse_match(int argc, char *argv[], cmd_t *c)
     {
         print_match_usage("pbwtmaster [ERROR]: --query option is mandatory");
         return -1;
+    }
+
+    return 0;
+}
+
+int parse_pileup(int argc, char *argv[], cmd_t *c)
+{
+    int g = 0;
+    char msg[100];
+
+    while (1)
+    {
+        int option_index = 0;
+
+        /* Declare the option table */
+        static struct option long_options[] =
+        {
+            { "query",   required_argument, NULL, 'q' },
+            { "minlen",  required_argument, NULL, 'm' },
+            { "set",     no_argument,       NULL, 's' },
+            { "version", no_argument,       NULL, 'v' },
+            { "help",    no_argument,       NULL, 'h' },
+            {0, 0, 0, 0}
+        };
+
+        /* Parse the option */
+        g = getopt_long(argc, argv, "q:m:svh", long_options, &option_index);
+
+        /* We are at the end of the options */
+        if (g == -1)
+            break;
+
+        /* Assign the option to variables */
+        switch(g)
+        {
+            case 'q':
+                c->query = strdup(optarg);
+                break;
+            case 'm':
+                c->minlen = atof(optarg);
+                break;
+            case 's':
+                c->set_match = 1;
+                break;
+            case 'v':
+                print_version();
+                return -1;
+            case 'h':
+                print_pileup_usage(NULL);
+                return -1;
+            case '?':
+                sprintf(msg, "pbwtmaster [ERROR]: unknown option \"-%c\".\n", optopt);
+                print_pileup_usage(msg);
+                return -1;
+            default:
+                print_pileup_usage(NULL);
+                return -1;
+        }
+    }
+
+    /* Parse non-optioned arguments */
+    if (optind != argc - 1)
+    {
+        print_pileup_usage("pbwtmaster [ERROR]: need input file name as mandatory argument");
+        return -1;
+    }
+    else
+    {
+        c->instub = strdup(argv[optind]);
+    }
+
+    /* Check that a query sequence has been specified */
+    if (c->query == NULL)
+    {
+        print_pileup_usage("pbwtmaster [ERROR]: --query option is mandatory");
+        return -1;
+    }
+
+    return 0;
+}
+
+int parse_summary(int argc, char *argv[], cmd_t *c)
+{
+    int g = 0;
+    char msg[100];
+
+    while (1)
+    {
+        int option_index = 0;
+
+        /* Declare the option table */
+        static struct option long_options[] =
+        {
+            { "regcount", no_argument,      NULL, 'r' },
+            { "version", no_argument,       NULL, 'v' },
+            { "help",    no_argument,       NULL, 'h' },
+            {0, 0, 0, 0}
+        };
+
+        /* Parse the option */
+        g = getopt_long(argc, argv, "rvh", long_options, &option_index);
+
+        /* We are at the end of the options */
+        if (g == -1)
+            break;
+
+        /* Assign the option to variables */
+        switch(g)
+        {
+            case 'r':
+                c->reg_count = 1;
+                break;
+            case 'v':
+                print_version();
+                return -1;
+            case 'h':
+                print_summary_usage(NULL);
+                return -1;
+            case '?':
+                sprintf(msg, "pbwtmaster [ERROR]: unknown option \"-%c\".\n", optopt);
+                print_summary_usage(msg);
+                return -1;
+            default:
+                print_summary_usage(NULL);
+                return -1;
+        }
+    }
+
+    /* Parse non-optioned arguments */
+    if (optind != argc - 1)
+    {
+        print_summary_usage("pbwtmaster [ERROR]: need input stub as mandatory argument");
+        return -1;
+    }
+    else
+    {
+        c->instub = strdup(argv[optind]);
     }
 
     return 0;
@@ -597,6 +681,25 @@ int print_match_usage(const char *msg)
     puts("  --all              Print a list of all individual matches with query");
     puts("  --set              Find only set-maximal matches [ Default: all matches ]");
     puts("  --sites            Print site indices [ Default: false ]");
+    puts("  --version          Print version number and exit");
+    puts("  --help             Display this help message and exit");
+    putchar('\n');
+    return 0;
+}
+
+int print_pileup_usage(const char *msg)
+{
+    puts("Usage: pbwtmaster pileup [OPTION]... [PBWT FILE]\n");
+    puts("Calculate match pileup depth across chromosomes\n");
+    putchar('\n');
+    if (msg)
+    {
+        printf("%s\n\n", msg);
+    }
+    puts("Options:");
+    puts("  --minlen   FLOAT   Minimum match size (cM) [ Default: 0.5 cM ]");
+    puts("  --query    STR     String identifier of haplotypes to mark as query");
+    puts("  --set              Find only set-maximal matches [ Default: all matches ]");
     puts("  --version          Print version number and exit");
     puts("  --help             Display this help message and exit");
     putchar('\n');
