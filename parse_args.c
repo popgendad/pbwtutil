@@ -53,6 +53,7 @@ cmd_t *parse_args(int argc, char *argv[])
     c->nohaps = 0;
     c->minlen = 0.5;
     c->only_sites = 0;
+    c->print_sites = 0;
     c->reg_count = 0;
     c->adjlist = 0;
     c->set_match = 0;
@@ -382,6 +383,7 @@ int parse_match(int argc, char *argv[], cmd_t *c)
             { "query",   required_argument, NULL, 'q' },
             { "minlen",  required_argument, NULL, 'm' },
             { "set",     no_argument,       NULL, 's' },
+            { "sites",   no_argument,       NULL, 'p' },
             { "all",     no_argument,       NULL, 'a' },
             { "version", no_argument,       NULL, 'v' },
             { "help",    no_argument,       NULL, 'h' },
@@ -402,6 +404,9 @@ int parse_match(int argc, char *argv[], cmd_t *c)
         {
             case 'q':
                 c->query = strdup(optarg);
+                break;
+            case 'p':
+                c->print_sites = 1;
                 break;
             case 'm':
                 c->minlen = atof(optarg);
@@ -591,6 +596,7 @@ int print_match_usage(const char *msg)
     puts("  --query    STR     String identifier of haplotypes to mark as query");
     puts("  --all              Print a list of all individual matches with query");
     puts("  --set              Find only set-maximal matches [ Default: all matches ]");
+    puts("  --sites            Print site indices [ Default: false ]");
     puts("  --version          Print version number and exit");
     puts("  --help             Display this help message and exit");
     putchar('\n');

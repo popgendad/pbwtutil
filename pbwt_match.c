@@ -77,7 +77,14 @@ int pbwt_match(const cmd_t *c)
     }
     else if (!c->set_match && c->match_all)
     {
-        v = pbwt_all_query_match(b, c->minlen, report_adjlist);
+        if (c->print_sites)
+        {
+            v = pbwt_all_query_match(b, c->minlen, report_adjlist_with_sites);
+        }
+        else
+        {
+            v = pbwt_all_query_match(b, c->minlen, report_adjlist);
+        }
     }
     else
     {
