@@ -618,6 +618,7 @@ int print_main_usage(const char *msg)
     puts("  coancesty           Construct coancestry matrix between individuals");
     puts("  convert             Convert PLINK or VCF to PBWT or vice versa");
     puts("  match               Run region matching algorithm");
+    puts("  pileup              Calculate match pileup depth across chromosomes");
     puts("  summary             Produce summary of PBWT file");
     puts("  view                Dump .pbwt file to stdout");
     putchar('\n');

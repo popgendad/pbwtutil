@@ -6,9 +6,10 @@ The `pbwtmaster` software leverages the `libpbwt` library to perfrom five main f
 
 1. `coancestry`: produce a pairwise match sharing similarity matrix between all diploid individuals in the PBWT
 2. `convert`: convert a data set from either PLINK or VCF to the PBWT format
-4. `match`: run matching on a PBWT data set by marking a haplotype as the query
-3. `summary`: report on basic statistics of a PBWT file
-5. `view`: view the contents of a PBWT file
+3. `match`: run matching on a PBWT data set by marking a haplotype as the query
+4. `pileup`: calculate match pileup depth across chromosomes
+5. `summary`: report on basic statistics of a PBWT file
+6. `view`: view the contents of a PBWT file
 
 ### coancestry function
 
@@ -57,6 +58,21 @@ Options:
   --minlen   FLOAT   Minimum match size (cM) [ Default: 0.5 cM ]
   --query    STR     String identifier of haplotypes to mark as query
   --all              Print a list of all matches with query
+  --set              Find only set-maximal matches [ Default: all matches ]
+  --version          Print version number and exit
+  --help             Display this help message and exit
+```
+
+### pileup function
+```
+Usage: pbwtmaster pileup [OPTION]... [PBWT FILE]
+
+Calculate match pileup depth across chromosomes
+
+
+Options:
+  --minlen   FLOAT   Minimum match size (cM) [ Default: 0.5 cM ]
+  --query    STR     String identifier of haplotypes to mark as query
   --set              Find only set-maximal matches [ Default: all matches ]
   --version          Print version number and exit
   --help             Display this help message and exit
