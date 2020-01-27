@@ -8,7 +8,7 @@ OBJS    := $(patsubst %.c, %.o, $(SRCS))
 all: pbwtmaster
 
 pbwtmaster: $(OBJS)
-	$(CC) -O2 -o $@ $^ $(LIBS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 %.o:%.c
 	$(CC) $(CFLAGS) -c $<
