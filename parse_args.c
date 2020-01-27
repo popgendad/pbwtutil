@@ -641,7 +641,7 @@ int print_view_usage(const char *msg)
 void print_version(void)
 {
     printf("pbwtmaster: %s\n", Version);
-    printf("libpbwt: %s\n", pbwt_version());
+    printf("libpbwt: %s\n", libpbwt_version());
     printf("libplink_lite: %s\n", plink_version());
     printf("htslib: %s\n", hts_version());
 }
