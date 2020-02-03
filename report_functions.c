@@ -11,8 +11,8 @@ void report_adjlist(pbwt_t *b, const size_t first, const size_t second, const si
 
 void report_adjlist_with_sites(pbwt_t *b, const size_t first, const size_t second, const size_t begin, const size_t end)
 {
-    printf("%s\t%s\t%zu\t%zu\t%1.4lf\t%s\t%s\n", b->sid[first], b->sid[second],
-           begin, end, b->cm[end] - b->cm[begin], b->reg[first], b->reg[second]);
+    printf("%s\t%s\t%1.4lf\t%s\t%s\t%zu\t%zu\n", b->sid[first], b->sid[second],
+            b->cm[end] - b->cm[begin], b->reg[first], b->reg[second], begin, end);
 }
 
 void add_interval(pbwt_t *b, const size_t first, const size_t second, const size_t begin, const size_t end)
