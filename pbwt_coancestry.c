@@ -73,7 +73,7 @@ int pbwt_coancestry(const cmd_t *c)
             {
                 for (j = 0; j < b->nsam/2 - 1; ++j)
                 {
-                    printf("%zu\t", b->nmatrix[2*i][2*j+1] + b->nmatrix[2*i+1][2*j]);
+                    printf("%zu\t", b->nmatrix[2*i][2*j] + b->nmatrix[2*i+1][2*j+1]);
                 }
                 printf("%zu\n", b->nmatrix[2*i][2*j+1] + b->nmatrix[2*i+1][2*j]);
             }
