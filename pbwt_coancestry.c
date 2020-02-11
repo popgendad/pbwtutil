@@ -73,9 +73,9 @@ int pbwt_coancestry(const cmd_t *c)
             {
                 for (j = 0; j < b->nsam/2 - 1; ++j)
                 {
-                    printf("%zu\t", b->nmatrix[2*i][2*j] + b->nmatrix[2*i+1][2*j+1]);
+                    printf("%zu\t", b->nmatrix[2*i][2*j+1] + b->nmatrix[2*i+1][2*j]);
                 }
-                printf("%zu\n", b->nmatrix[2*i][2*j+1] + b->nmatrix[2*i+1][2*j]);
+                printf("%zu\n", b->nmatrix[2*i][2*j] + b->nmatrix[2*i+1][2*j+1]);
             }
         }
         else
@@ -114,9 +114,9 @@ int pbwt_coancestry(const cmd_t *c)
             {
                 for (j = 0; j < b->nsam/2 - 1; ++j)
                 {
-                    printf("%1.4lf\t", b->cmatrix[2*i][2*j] + b->cmatrix[2*i+1][2*j+1]);
+                    printf("%1.4lf\t", b->cmatrix[2*i][2*j+1] + b->cmatrix[2*i+1][2*j]);
                 }
-                printf("%1.4lf\n", b->cmatrix[2*i][2*j+1] + b->cmatrix[2*i+1][2*j]);
+                printf("%1.4lf\n", b->cmatrix[2*i][2*j] + b->cmatrix[2*i+1][2*j+1]);
             }
         }
         else
