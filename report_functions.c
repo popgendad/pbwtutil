@@ -20,6 +20,30 @@ void add_interval(pbwt_t *b, const size_t first, const size_t second, const size
     b->intree = match_insert(b->intree, first, second, begin, end);
 }
 
+
+void add_nmatch(pbwt_t *b, const size_t first, const size_t second, const size_t begin, const size_t end)
+{
+	if (b->nmatrix == NULL)
+	{
+		b->nmatrix = (size_t **)malloc(b->nsam * sizeof(size_t *));
+		if (b->nmatrix == NULL)
+		{
+			return;
+		}
+		size_t i = 0;
+		for (i = 0; i < b->nsam; ++i)
+		{
+			b->nmatrix[i] = (size_t *)calloc(b->nsam, sizeof(size_t));
+			if (b->nmatrix[i] == NULL)
+			{
+				return;
+			}
+		}
+	}
+	b->nmatrix[first][second]++;
+	b->nmatrix[second][first]++;
+}
+
 void add_coancestry(pbwt_t *b, const size_t first, const size_t second, const size_t begin, const size_t end)
 {
 	if (b->cmatrix == NULL)
@@ -29,7 +53,7 @@ void add_coancestry(pbwt_t *b, const size_t first, const size_t second, const si
 		{
 			return;
 		}
-		size_t i;
+		size_t i = 0;
 		for (i = 0; i < b->nsam; i++)
 		{
 			b->cmatrix[i] = (double *)calloc(b->nsam, sizeof(double));
