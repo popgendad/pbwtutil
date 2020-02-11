@@ -40,7 +40,14 @@ int pbwt_coancestry(const cmd_t *c)
         }
         else
         {
-            v = pbwt_all_match(b, c->minlen, report_adjlist);
+            if (c->print_sites)
+            {
+                v = pbwt_all_match(b, c->minlen, report_adjlist_with_sites);
+            }
+            else
+            {
+                v = pbwt_all_match(b, c->minlen, report_adjlist);
+            }
         }
         /* TODO: Implement adjlist diploid
         if (c->out_diploid)
