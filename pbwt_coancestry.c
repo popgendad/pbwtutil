@@ -36,7 +36,14 @@ int pbwt_coancestry(const cmd_t *c)
     {
         if (c->set_match)
         {
-            v = pbwt_set_match(b, c->minlen, report_adjlist);
+            if (c->print_sites)
+            {
+                v = pbwt_set_match(b, c->minlen, report_adjlist_with_sites);
+            }
+            else
+            {
+                v = pbwt_set_match(b, c->minlen, report_adjlist);
+            }
         }
         else
         {
