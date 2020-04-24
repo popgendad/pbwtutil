@@ -22,6 +22,7 @@ typedef struct cmdl
     int match_all;
     int print_sites;
     int only_sites;
+    int count_only;
     int reg_count;
     int adjlist;
     int out_diploid;
@@ -60,6 +61,8 @@ extern  void report_adjlist(pbwt_t *, const size_t, const size_t, const size_t, 
 extern void report_adjlist_with_sites(pbwt_t *, const size_t, const size_t, const size_t, const size_t);
 
 extern void add_coancestry(pbwt_t *, const size_t, const size_t, const size_t, const size_t);
+
+extern void add_nmatch(pbwt_t *, const size_t, const size_t, const size_t, const size_t);
 
 extern void add_region(pbwt_t *, const size_t, const size_t, const size_t, const size_t);
 

@@ -36,22 +36,60 @@ int pbwt_coancestry(const cmd_t *c)
     {
         if (c->set_match)
         {
-            v = pbwt_set_match(b, c->minlen, report_adjlist);
+            if (c->print_sites)
+            {
+                v = pbwt_set_match(b, c->minlen, report_adjlist_with_sites);
+            }
+            else
+            {
+                v = pbwt_set_match(b, c->minlen, report_adjlist);
+            }
         }
         else
         {
-            v = pbwt_all_match(b, c->minlen, report_adjlist);
+            if (c->print_sites)
+            {
+                v = pbwt_all_match(b, c->minlen, report_adjlist_with_sites);
+            }
+            else
+            {
+                v = pbwt_all_match(b, c->minlen, report_adjlist);
+            }
         }
-        /* TODO: Implement adjlist diploid
+    }
+    else if (c->count_only)
+    {
+        if (c->set_match)
+        {
+            v = pbwt_set_match(b, c->minlen, add_nmatch);
+        }
+        else
+        {
+            v = pbwt_all_match(b, c->minlen, add_nmatch);
+        }
         if (c->out_diploid)
         {
-            adjlist_t *h = diploidize(g);
-            print_adjlist(h);
+            for (i = 0; i < b->nsam/2; ++i)
+            {
+                for (j = 0; j < b->nsam/2 - 1; ++j)
+                {
+                    printf("%zu\t", b->nmatrix[2*i][2*j+1] + b->nmatrix[2*i+1][2*j]);
+                }
+                printf("%zu\n", b->nmatrix[2*i][2*j] + b->nmatrix[2*i+1][2*j+1]);
+            }
         }
         else
         {
-            print_adjlist(g);
-        }*/
+            /* Print coancestry matrix to STDOUT */
+            for (i = 0; i < b->nsam; ++i)
+            {
+                for (j = 0; j < b->nsam - 1; ++j)
+                {
+                    printf("%zu\t", b->nmatrix[i][j]);
+                }
+                printf("%zu\n", b->nmatrix[i][j]);
+            }
+        }
     }
     else
     {

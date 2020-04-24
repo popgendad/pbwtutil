@@ -56,6 +56,7 @@ cmd_t *parse_args(int argc, char *argv[])
     c->minlen = 0.5;
     c->only_sites = 0;
     c->print_sites = 0;
+    c->count_only = 0;
     c->reg_count = 0;
     c->adjlist = 0;
     c->set_match = 0;
@@ -169,6 +170,8 @@ int parse_coancestry(int argc, char *argv[], cmd_t *c)
             { "diploid", no_argument,       NULL, 'd' },
             { "adjlist", no_argument,       NULL, 'a' },
             { "set",     no_argument,       NULL, 's' },
+            { "sites",   no_argument,       NULL, 'p' },
+            { "count",   no_argument,       NULL, 'c' },
             { "minlen",  required_argument, NULL, 'm' },
             { "version", no_argument,       NULL, 'v' },
             { "help",    no_argument,       NULL, 'h' },
@@ -176,7 +179,7 @@ int parse_coancestry(int argc, char *argv[], cmd_t *c)
         };
 
         /* Parse the option */
-        g = getopt_long(argc, argv, "vhasm:", long_options, &option_index);
+        g = getopt_long(argc, argv, "daspcvhm:", long_options, &option_index);
 
         /* We are at the end of the options */
         if (g == -1)
@@ -198,6 +201,12 @@ int parse_coancestry(int argc, char *argv[], cmd_t *c)
                 break;
             case 's':
                 c->set_match = 1;
+                break;
+            case 'c':
+                c->count_only = 1;
+                break;
+            case 'p':
+                c->print_sites = 1;
                 break;
             case 'v':
                 print_version();
@@ -638,6 +647,8 @@ int print_coancestry_usage(const char *msg)
     puts("  --adjlist          Output graph-based adjacency list [ Default: False ]");
     puts("  --diploid          Output diploid rather than haploid-based measures");
     puts("  --set              Find only set-maximal matches [ Default: all matches ]");
+    puts("  --sites            Print site indices [ Default: false ]");
+    puts("  --count            Coancestry matrix will have match count [ Default: total length ]");
     puts("  --minlen   FLOAT   Minimum match size (cM) [ Default: 0.5 cM ]");
     puts("  --version          Print version number and exit");
     puts("  --help             Display this help message and exit");
