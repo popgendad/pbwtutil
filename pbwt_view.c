@@ -93,11 +93,11 @@ int pbwt_print(const pbwt_t *b, const int nohaps)
         {
             if (nohaps)
             {
-                printf("\t%.20s", b->reg[i]);
+                printf("\t%.30s", b->reg[i]);
             }
             else
             {
-                printf("\t%20.20s", b->reg[i]);
+                printf("\t%30.30s", b->reg[i]);
             }
         }
 
