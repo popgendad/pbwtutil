@@ -13,5 +13,8 @@ pbwtmaster: $(OBJS)
 %.o:%.c
 	$(CC) $(CFLAGS) -c $<
 
+install:
+	cp pbwtmaster /usr/bin/pbwtmaster
+
 clean:
 	rm *.o pbwtmaster
