@@ -1,8 +1,8 @@
-## pbwtmaster
+## pbwtutil
 
 Utilities for working with the PBWT format
 
-The `pbwtmaster` software leverages the `libpbwt` library to perfrom five main functions:
+The `pbwtutil` software leverages the `libpbwt` library to perfrom five main functions:
 
 1. `coancestry`: produce a pairwise match sharing similarity matrix between all diploid individuals in the PBWT
 2. `convert`: convert a data set from either PLINK or VCF to the PBWT format
@@ -14,7 +14,7 @@ The `pbwtmaster` software leverages the `libpbwt` library to perfrom five main f
 ### coancestry function
 
 ```
-Usage: pbwtmaster coancestry [OPTION]... [PBWT FILE]
+Usage: pbwtutil coancestry [OPTION]... [PBWT FILE]
 
 Produce coancestry matrix for all samples in PBWT
 
@@ -33,7 +33,7 @@ Options:
 ### convert function
 
 ```
-Usage: pbwtmaster convert [OPTION]... [INPUT STUB]
+Usage: pbwtutil convert [OPTION]... [INPUT STUB]
 
 Convert PLINK or VCF to PBWT or vice versa
 
@@ -51,7 +51,7 @@ Options:
 
 ### match function
 ```
-Usage: pbwtmaster match [OPTION]... [PBWT FILE]
+Usage: pbwtutil match [OPTION]... [PBWT FILE]
 
 Retrieve match sets in PBWT using query
 
@@ -68,7 +68,7 @@ Options:
 
 ### pileup function
 ```
-Usage: pbwtmaster pileup [OPTION]... [PBWT FILE]
+Usage: pbwtutil pileup [OPTION]... [PBWT FILE]
 
 Calculate match pileup depth across chromosomes
 
@@ -83,7 +83,7 @@ Options:
 
 ### summary function
 ```
-Usage: pbwtmaster summary [OPTION]... [INPUT STUB]
+Usage: pbwtutil summary [OPTION]... [INPUT STUB]
 
 Print report describing pbwt file
 
@@ -97,7 +97,7 @@ Options:
 ### view function
 
 ```
-Usage: pbwtmaster view [OPTION]... [PBWT FILE]
+Usage: pbwtutil view [OPTION]... [PBWT FILE]
 
 Print contents of .pbwt file to stdout
 
