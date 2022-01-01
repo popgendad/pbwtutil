@@ -5,16 +5,16 @@ LIBS    := -lz -lhts -lpbwt -lplink_lite
 SRCS    := $(wildcard *.c)
 OBJS    := $(patsubst %.c, %.o, $(SRCS))
 
-all: pbwtmaster
+all: pbwtutil
 
-pbwtmaster: $(OBJS)
+pbwtutil: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 %.o:%.c
 	$(CC) $(CFLAGS) -c $<
 
 install:
-	cp pbwtmaster /usr/bin/pbwtmaster
+	cp pbwtutil /usr/bin/pbwtutil
 
 clean:
-	rm *.o pbwtmaster
+	rm *.o pbwtutil
