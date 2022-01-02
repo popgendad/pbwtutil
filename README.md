@@ -2,6 +2,10 @@
 
 Utilities for working with the PBWT format
 
+[![Publish Docker image](https://github.com/popgendad/pbwtutil/actions/workflows/main.yml/badge.svg)](https://github.com/popgendad/pbwtutil/actions/workflows/main.yml)
+
+---
+
 The `pbwtutil` software leverages the `libpbwt` library to perfrom five main functions:
 
 1. `coancestry`: produce a pairwise match sharing similarity matrix between all diploid individuals in the PBWT
