@@ -1,4 +1,4 @@
-FROM libpbwt:latest
+FROM dgarriga/libpbwt:latest
 RUN mkdir /usr/local/src/pbwtutil
 COPY ./ /usr/local/src/pbwtutil/
 WORKDIR /usr/local/src/pbwtutil
