@@ -1,5 +1,5 @@
-#ifndef PBWTMASTER_H
-#define PBWTMASTER_H
+#ifndef PBWTUTIL_H
+#define PBWTUTIL_H
 
 #include <htslib/khash.h>
 #include <htslib/vcf.h>

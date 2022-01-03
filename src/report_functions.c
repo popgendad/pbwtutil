@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "pbwtmaster.h"
+#include "pbwtutil.h"
 
 void report_adjlist(pbwt_t *b, const size_t first, const size_t second, const size_t begin, const size_t end)
 {
