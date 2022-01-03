@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "pbwtmaster.h"
+#include "pbwtutil.h"
 
 int pbwt_coancestry(const cmd_t *c)
 {
@@ -19,7 +19,7 @@ int pbwt_coancestry(const cmd_t *c)
     b = pbwt_read(c->instub);
     if (b == NULL)
     {
-        fprintf(stderr, "pbwtmaster [ERROR]: cannot read data from %s\n", c->instub);
+        fprintf(stderr, "pbwtutil [ERROR]: cannot read data from %s\n", c->instub);
         return -1;
     }
 
@@ -27,7 +27,7 @@ int pbwt_coancestry(const cmd_t *c)
     v = pbwt_uncompress(b);
     if (v < 0)
     {
-        fputs("pbwtmaster [ERROR]: error uncompressing haplotype data\n", stderr);
+        fputs("pbwtutil [ERROR]: error uncompressing haplotype data\n", stderr);
         return -1;
     }
 
@@ -104,7 +104,7 @@ int pbwt_coancestry(const cmd_t *c)
         }
         if (v < 0)
         {
-            fputs("pbwtmaster [ERROR]: error retrieving matches\n", stderr);
+            fputs("pbwtutil [ERROR]: error retrieving matches\n", stderr);
             return -1;
         }
 

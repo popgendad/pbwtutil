@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "pbwtmaster.h"
+#include "pbwtutil.h"
 
 int pbwt_convert_plink(const cmd_t *c)
 {
@@ -20,7 +20,7 @@ int pbwt_convert_plink(const cmd_t *c)
     outfile = (char *)malloc((length + 4) * sizeof(char));
     if (outfile == NULL)
     {
-        fputs("pbwtmaster [ERROR]: memory allocation error\n", stderr);
+        fputs("pbwtutil [ERROR]: memory allocation error\n", stderr);
         return -1;
     }
     strcpy(outfile, c->instub);
@@ -30,7 +30,7 @@ int pbwt_convert_plink(const cmd_t *c)
     b = pbwt_import_plink(c->instub);
     if (b == NULL)
     {
-        fputs("pbwtmaster [ERROR]: problem importing PLINK stub\n", stderr);
+        fputs("pbwtutil [ERROR]: problem importing PLINK stub\n", stderr);
         return -1;
     }
 
@@ -38,7 +38,7 @@ int pbwt_convert_plink(const cmd_t *c)
     v = pbwt_write(outfile, b);
     if (v != 0)
     {
-        fputs("pbwtmaster [ERROR]: Failed to write PBWT to disk\n", stderr);
+        fputs("pbwtutil [ERROR]: Failed to write PBWT to disk\n", stderr);
         return -1;
     }
 
@@ -63,7 +63,7 @@ int pbwt_convert_vcf(const cmd_t *c)
     b = pbwt_import_vcf(c->instub, c->popmap);
     if (b == NULL)
     {
-        fputs("pbwtmaster [ERROR]: problem importing VCF data\n", stderr);
+        fputs("pbwtutil [ERROR]: problem importing VCF data\n", stderr);
         return -1;
     }
 
@@ -71,7 +71,7 @@ int pbwt_convert_vcf(const cmd_t *c)
     v = pbwt_write(c->outfile, b);
     if (v != 0)
     {
-     	fputs("pbwtmaster [ERROR]: Failed to write PBWT to disk\n", stderr);
+     	fputs("pbwtutil [ERROR]: Failed to write PBWT to disk\n", stderr);
         return -1;
     }
 

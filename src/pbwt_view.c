@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "pbwtmaster.h"
+#include "pbwtutil.h"
 
 int pbwt_print(const pbwt_t *, const int);
 int print_sites(const pbwt_t *);
@@ -19,7 +19,7 @@ int pbwt_view(const cmd_t *c)
     b = pbwt_read(c->instub);
     if (b == NULL)
     {
-        fprintf(stderr, "pbwtmaster [ERROR]: cannot read data from %s\n", c->instub);
+        fprintf(stderr, "pbwtutil [ERROR]: cannot read data from %s\n", c->instub);
         return -1;
     }
 
@@ -27,7 +27,7 @@ int pbwt_view(const cmd_t *c)
     v = pbwt_uncompress(b);
     if (v < 0)
     {
-        fputs("pbwtmaster [ERROR]: error uncompressing haplotype data\n", stderr);
+        fputs("pbwtutil [ERROR]: error uncompressing haplotype data\n", stderr);
         return -1;
     }
 
@@ -84,7 +84,7 @@ int pbwt_print(const pbwt_t *b, const int nohaps)
         }
         else
         {
-            fprintf(stderr, "pbwtmaster [ERROR]: problem reading sample identifier with index %5zu\n", i);
+            fprintf(stderr, "pbwtutil [ERROR]: problem reading sample identifier with index %5zu\n", i);
             return -1;
         }
 

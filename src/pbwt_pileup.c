@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "pbwtmaster.h"
+#include "pbwtutil.h"
 
 int pbwt_pileup(const cmd_t *c)
 {
@@ -21,7 +21,7 @@ int pbwt_pileup(const cmd_t *c)
     b = pbwt_read(c->instub);
     if (b == NULL)
     {
-        fprintf(stderr, "pbwtmaster [ERROR]: cannot read data from %s\n", c->instub);
+        fprintf(stderr, "pbwtutil [ERROR]: cannot read data from %s\n", c->instub);
         return -1;
     }
 
@@ -29,7 +29,7 @@ int pbwt_pileup(const cmd_t *c)
     v = pbwt_uncompress(b);
     if (v < 0)
     {
-        fputs("pbwtmaster [ERROR]: error uncompressing haplotype data\n", stderr);
+        fputs("pbwtutil [ERROR]: error uncompressing haplotype data\n", stderr);
         return -1;
     }
 
@@ -37,7 +37,7 @@ int pbwt_pileup(const cmd_t *c)
     sdict = pbwt_get_sampdict(b);
     if (sdict == NULL)
     {
-        fputs("pbwtmaster [ERROR]: cannot construct sample identifier dictionary\n", stderr);
+        fputs("pbwtutil [ERROR]: cannot construct sample identifier dictionary\n", stderr);
         return -1;
     }
 
@@ -52,7 +52,7 @@ int pbwt_pileup(const cmd_t *c)
     }
     else
     {
-        fprintf(stderr, "pbwtmaster [ERROR]: cannot find haplotype with id %s\n", c->query);
+        fprintf(stderr, "pbwtutil [ERROR]: cannot find haplotype with id %s\n", c->query);
         return -1;
     }
 
