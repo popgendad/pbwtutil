@@ -14,7 +14,7 @@ pbwtutil: $(OBJS)
 	$(CC) $(CFLAGS) -c $<
 
 install:
-	cp pbwtutil /usr/bin/pbwtutil
+	cp src/pbwtutil /usr/bin/pbwtutil
 
 clean:
-	rm *.o pbwtutil
+	rm src/*.o pbwtutil
