@@ -11,7 +11,7 @@ pbwtutil: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 src/%.o:src/%.c
-	$(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS) -o $@ -c $<
 
 install:
 	cp pbwtutil /usr/bin/pbwtutil
