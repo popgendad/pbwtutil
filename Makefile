@@ -10,11 +10,11 @@ all: pbwtutil
 pbwtutil: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
-%.o:%.c
+src/%.o:src/%.c
 	$(CC) $(CFLAGS) -c $<
 
 install:
-	cp src/pbwtutil /usr/bin/pbwtutil
+	cp pbwtutil /usr/bin/pbwtutil
 
 clean:
 	rm src/*.o pbwtutil
