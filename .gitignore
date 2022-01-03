@@ -1,2 +1,3 @@
-*.o
-pbwtmaster
+src/*.o
+pbwtutil
+.DS_Store
