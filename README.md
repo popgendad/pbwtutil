@@ -87,7 +87,7 @@ Options:
 
 ### summary function
 ```
-Usage: pbwtutil summary [OPTION]... [INPUT STUB]
+Usage: pbwtutil summary [OPTION]... [PBWT FILE]
 
 Print report describing pbwt file
 
