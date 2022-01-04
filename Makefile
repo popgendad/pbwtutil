@@ -14,7 +14,7 @@ src/%.o:src/%.c
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 install:
-	cp pbwtutil /usr/bin/pbwtutil
+	cp pbwtutil /usr/local/bin/pbwtutil
 
 clean:
 	rm src/*.o pbwtutil
