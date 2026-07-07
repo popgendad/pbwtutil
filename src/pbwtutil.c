@@ -1,14 +1,12 @@
 #include "pbwtutil.h"
 
-int main(int argc, char **argv)
-{
-    cmd_t *c = NULL;
- 
-    c = parse_args(argc, argv);
-    if (!c)
-    {
-        return -1;
-    }
+int main(int argc, char **argv) {
+  cmd_t *c = NULL;
 
-    return (*c->mode_func)(c);
+  c = parse_args(argc, argv);
+  if (!c) {
+    return -1;
+  }
+
+  return (*c->mode_func)(c);
 }
